@@ -3,7 +3,7 @@
 
 #https://stackoverflow.com/questions/67941070/github-action-trigger-on-multiple-on-push-paths
 
-name: compile microservice java application
+name: auto compile
 
 on:
   push:
