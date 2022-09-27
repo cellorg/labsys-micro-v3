@@ -1,4 +1,4 @@
-name: Manual create ECR repo
+name: Manual destroy ECR repo
 
 on:
   workflow_dispatch:
