@@ -38,6 +38,6 @@ jobs:
           npm run build
           cdk synth
           cdk bootstrap
-          cdk deploy EcrRepoStack --require-approval never
+          cdk deploy MicroaEcrRepoStack --require-approval never
 
           
