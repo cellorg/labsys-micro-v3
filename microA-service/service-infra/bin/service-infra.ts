@@ -2,7 +2,6 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { ServiceInfraStack } from '../lib/service-infra-stack';
-import {EcrRepoStack} from "../lib/ecr-repo-stack";
 
 const app = new cdk.App();
 new ServiceInfraStack(app, 'MicroaInfraStack', {
@@ -21,6 +20,3 @@ new ServiceInfraStack(app, 'MicroaInfraStack', {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
 
-new EcrRepoStack(app, 'MicroaEcrRepoStack', {
-    stackName: 'MicroaEcrRepoStack'
-});
