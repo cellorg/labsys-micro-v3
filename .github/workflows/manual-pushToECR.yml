@@ -34,8 +34,7 @@ jobs:
     steps:
     - name: Set env var of ECR repo name
       run: |
-        # repository name has to be lower case, use shell parameter expansion to convert the string to lower case https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-        # echo "dockerRepoName=${github.event.inputs.microserviceName,,}" >>${GITHUB_ENV}
+        # repository name has to be lower case, https://github.com/docker/build-push-action/issues/37
         echo dockerRepoName=$(echo ${{ github.event.inputs.microserviceName }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
     - name: Set env vars of target environment
       if: ${{ github.event.inputs.targetEnv == 'd1' }}
@@ -68,13 +67,7 @@ jobs:
     - name: Build, tag, and push image to Amazon ECR
       env: 
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        # repository name has to be lower case, use shell parameter expansion to convert the string to lower case https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-        # ECR_REPOSITORY: ${ github.event.inputs.microserviceName,, }
-        # IMAGE_TAG: ${{ env.dockerImageTag }}
       run : |
-        # docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        # docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        pwd
         cd '${{ github.event.inputs.microserviceName }}-service/service-src'
         docker build -t $ECR_REGISTRY/$dockerRepoName:$dockerImageTag .
         docker push $ECR_REGISTRY/$dockerRepoName:$dockerImageTag
