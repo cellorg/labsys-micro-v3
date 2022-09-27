@@ -31,6 +31,6 @@ jobs:
           aws-region: 'us-east-1'
       - name: create ECR repo on AWS
         run: |
-          aws ecr delete-repository --repository-name ${{ env.dockerRepoName }}
+          aws ecr delete-repository --repository-name ${{ env.dockerRepoName }} --force
 
           
