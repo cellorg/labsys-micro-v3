@@ -32,7 +32,7 @@ jobs:
           aws-region: 'us-east-1'
       - name: deploy to AWS
         run: |
-          cd '${{ github.event.inputs.microserviceName }}-service/service-infra'
+          cd ${{ github.event.inputs.microserviceName }}-service/service-infra
           npm install
           npm run build
           cdk synth
