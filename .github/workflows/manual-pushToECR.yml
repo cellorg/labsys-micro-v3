@@ -35,7 +35,8 @@ jobs:
     - name: Set env var of ECR repo name
       run: |
         # repository name has to be lower case, use shell parameter expansion to convert the string to lower case https://www.gnu.org/software/bash/manual/html_node/Shell-Parameter-Expansion.html
-        echo "dockerRepoName=${github.event.inputs.microserviceName,,}" >>${GITHUB_ENV}
+        # echo "dockerRepoName=${github.event.inputs.microserviceName,,}" >>${GITHUB_ENV}
+        echo dockerRepoName=$(echo ${{ github.event.inputs.microserviceName }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
     - name: Set env vars of target environment
       if: ${{ github.event.inputs.targetEnv == 'd1' }}
       run: |
