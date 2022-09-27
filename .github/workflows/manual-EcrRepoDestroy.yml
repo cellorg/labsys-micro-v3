@@ -1,0 +1,43 @@
+name: Manual create ECR repo
+
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      microserviceName:
+        type: choice
+        description: 'microserviceName'
+        default: 'microA'
+        required: true
+        options:
+          - microA
+          - microB
+
+jobs:
+  buildDockerImage:
+    name: Create AWS ECR repo for a microservice
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: "16"
+      - name: Install AWS CDK
+        run: 'sudo npm install -g aws-cdk'
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.WENDYADMIN_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.WENDYADMIN_SECRET_KEY }}
+          aws-region: 'us-east-1'
+      - name: deploy to AWS
+        run: |
+          cd ${{ github.event.inputs.microserviceName }}-service/service-infra
+          npm install
+          npm run build
+          cdk synth
+          cdk bootstrap
+          cdk destroy MicroaEcrRepoStack --require-approval never
+
+          
