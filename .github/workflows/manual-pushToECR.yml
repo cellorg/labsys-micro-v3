@@ -31,7 +31,7 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: |
-          cd '${{ github.event.inputs.microserviceName }}-service/service-src'
+          cd ${{ github.event.inputs.microserviceName }}-service/service-src
           mvn -B package --file pom.xml
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -46,7 +46,7 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run : |
-          cd '${{ github.event.inputs.microserviceName }}-service/service-src'
+          cd ${{ github.event.inputs.microserviceName }}-service/service-src
           # tag the image with branch name
           docker build -t $ECR_REGISTRY/$dockerRepoName:${{ github.ref_name }} .
           docker push $ECR_REGISTRY/$dockerRepoName:${{ github.ref_name }}

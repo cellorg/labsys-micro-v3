@@ -21,4 +21,6 @@ new ServiceInfraStack(app, 'MicroaInfraStack', {
   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
 });
 
-new EcrRepoStack(app, 'MicroaEcrRepoStack', {});
+new EcrRepoStack(app, 'MicroaEcrRepoStack', {
+    stackName: 'MicroaEcrRepoStack'
+});

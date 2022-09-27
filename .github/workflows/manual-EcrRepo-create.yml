@@ -33,11 +33,12 @@ jobs:
           aws-region: 'us-east-1'
       - name: deploy to AWS
         run: |
-          cd ${{ github.event.inputs.microserviceName }}-service/service-infra
-          npm install
-          npm run build
-          cdk synth
-          cdk bootstrap
-          cdk deploy MicroaEcrRepoStack --require-approval never
+          # cd ${{ github.event.inputs.microserviceName }}-service/service-infra
+          # npm install
+          # npm run build
+          # cdk synth
+          # cdk bootstrap
+          # cdk deploy MicroaEcrRepoStack --require-approval never
+          aws ecr create-repository --repository-name ${{ github.event.inputs.microserviceName }}
 
           
