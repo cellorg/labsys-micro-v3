@@ -10,8 +10,8 @@ on:
         default: 'microA'
         required: true
         options:
-          - microA
-          - microB
+          - microa
+          - microb
 
 jobs:
   buildDockerImage:
