@@ -10,14 +10,14 @@ on:
     branches:
       - dev
     paths:
-      - 'microA-service/service-src/**'
-      - 'microB-service/service-src/**'
+      - 'microa-service/service-src/**'
+      - 'microv-service/service-src/**'
   pull_request:
     branches:
       - dev
     paths:
-      - 'microA-service/service-src/**'
-      - 'microB-service/service-src/**'
+      - 'microa-service/service-src/**'
+      - 'microb-service/service-src/**'
 
 jobs:
   build:
@@ -36,19 +36,19 @@ jobs:
       id: changes
       with:
            filters: |
-              microA:
-                - 'microA-service/service-src/**'
-              microB:
-                - 'microB-service/service-src/**'
+              microa:
+                - 'microa-service/service-src/**'
+              microb:
+                - 'microb-service/service-src/**'
     - name: Compile microA service
-      if: steps.changes.outputs.microA == 'true'
+      if: steps.changes.outputs.microa == 'true'
       run: |
-        echo "compiling microA ... "
-        cd microA-service/service-src/
+        echo "compiling microa ... "
+        cd microa-service/service-src/
         mvn -B package --file pom.xml
-    - name: Compile microB service
-      if: steps.changes.outputs.microB == 'true'
+    - name: Compile microb service
+      if: steps.changes.outputs.microb == 'true'
       run: |
-        echo "compiling microB ... "
-        cd microB-service/service-src/
+        echo "compiling microb ... "
+        cd microb-service/service-src/
         mvn -B package --file pom.xml
