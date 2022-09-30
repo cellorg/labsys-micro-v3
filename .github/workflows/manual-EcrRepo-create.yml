@@ -22,7 +22,7 @@ jobs:
       #  run: |
       #    # repository name has to be lower case, https://github.com/docker/build-push-action/issues/37
       #    echo dockerRepoName=$(echo ${{ github.event.inputs.microserviceName }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
-      - uses: actions/checkout@v3
+      #- uses: actions/checkout@v3
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
