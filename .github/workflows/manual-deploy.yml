@@ -1,4 +1,4 @@
-name: Manual push to ECR
+name: Manual deploy
 
 on:
   workflow_dispatch:
