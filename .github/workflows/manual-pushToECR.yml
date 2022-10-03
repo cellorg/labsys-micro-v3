@@ -7,7 +7,7 @@ on:
       microserviceName:
         type: choice
         description: 'microserviceName'
-        default: 'microA'
+        default: 'microa'
         required: true
         options:
           - microa
