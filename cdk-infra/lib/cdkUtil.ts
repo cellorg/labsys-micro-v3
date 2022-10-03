@@ -6,14 +6,15 @@ const microSvcName = process.env.microSvcName || 'microa';
 export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1') ;
 //export const imageTag = process.env.imageTag || 'dev'; // image tag as branch
 
-// Each microservice image is tagged with the src branch.
-// The same image is shared by all environments as long as the src is the same.
-//export const imageRepoId = microSvcName + '-repo';
+// The microservice image will be built from the microservices' source directory
 export const microSvcSrcDir = '../microservices/' + microSvcName || '../microservices/microa';
 
 // We will use one API Gateway, VPC, VPC LInk, Cloud Map for all microservcies in each env.
 // shared infra resources are prefixed as <env>-labsys, e.g. d1-labsys
 export const applicationName = targetEnv + '-labsys';
+export const SharedApiGatewayStackId = applicationName + '-SharedApiGatewayStack';
+export const SharedInfraStackId = applicationName + '-SharedInfraStack';
+export const ServiceInfraStackId = applicationName + '-ServiceInfraStack';
 export const vpcId = applicationName + '-vpc';
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';

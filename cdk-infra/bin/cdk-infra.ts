@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { SharedInfraStack } from '../lib/shared-infra-stack';
 import { ServiceInfraStack } from '../lib/service-infra-stack'
 import {SharedApiGatewayStack} from "../lib/shared-apigateway-infra";
+import * as cdkUtil from '../lib/cdkUtil';
 
 const accountRegionEnv = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -12,15 +13,15 @@ const accountRegionEnv = {
 
 const app = new cdk.App();
 
-const sharedApiGatewayStack = new SharedApiGatewayStack(app, 'SharedApiGatewayStack', {
+const sharedApiGatewayStack = new SharedApiGatewayStack(app, cdkUtil.SharedApiGatewayStackId, {
     env: accountRegionEnv
 });
 
-const sharedInfraStack = new SharedInfraStack(app, 'SharedInfraStack', {
+const sharedInfraStack = new SharedInfraStack(app, cdkUtil.SharedInfraStackId, {
     env: accountRegionEnv
 });
 
-new ServiceInfraStack(app, 'ServiceInfraStack', {
+new ServiceInfraStack(app, cdkUtil.ServiceInfraStackId, {
     env: accountRegionEnv,
     apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,
