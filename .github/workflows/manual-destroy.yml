@@ -51,7 +51,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk destroy --all --require-approval never
+          cdk destroy --all --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs. microSvcName }}
