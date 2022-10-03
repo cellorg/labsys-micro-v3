@@ -29,7 +29,7 @@ on:
 
 jobs:
   buildDockerImage:
-    name: Build Docker Image
+    name: manual destroy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
