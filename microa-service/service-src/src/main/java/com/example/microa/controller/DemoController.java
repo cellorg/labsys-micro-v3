@@ -9,7 +9,7 @@ public class DemoController {
     @Value("${pdp.owner.jdbc.url}")
     private String dbUrl;
 
-    @GetMapping
+    @GetMapping("/hello")
     public String helloWorld() {
         return "Welcome to micorA! parameter dbUrl is " + dbUrl;
     }
