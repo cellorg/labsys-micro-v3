@@ -37,9 +37,9 @@ jobs:
       with:
            filters: |
               microa:
-                - 'microa-service/service-src/**'
-              microb:
-                - 'microb-service/service-src/**'
+                - 'microservices/microa/**'
+              animal:
+                - 'microservices/animal/**'
     - name: Compile microA service
       if: steps.changes.outputs.microa == 'true'
       run: |

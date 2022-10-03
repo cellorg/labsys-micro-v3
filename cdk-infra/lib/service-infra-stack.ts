@@ -1,6 +1,6 @@
 import * as cdkUtil from './cdkUtil'
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2, aws_ecs, aws_ecr } from "aws-cdk-lib";
+import { aws_ec2, aws_ecs } from "aws-cdk-lib";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
@@ -37,14 +37,15 @@ export class ServiceInfraStack extends cdk.Stack {
     });
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
-    const imageRepo = aws_ecr.Repository.fromRepositoryName(this, cdkUtil.imageRepoId, cdkUtil.imageRepoId);
+    //const imageRepo = aws_ecr.Repository.fromRepositoryName(this, cdkUtil.imageRepoId, cdkUtil.imageRepoId);
 
     const containerId = cdkUtil.microSvcNameResourcePrefix + '-container';
     const container = taskDefinition.addContainer(
         containerId,
         {
           containerName: containerId,
-          image: aws_ecs.ContainerImage.fromEcrRepository(imageRepo, cdkUtil.imageTag),
+          //image: aws_ecs.ContainerImage.fromEcrRepository(imageRepo, cdkUtil.imageTag),
+          image: aws_ecs.ContainerImage.fromAsset(cdkUtil.microSvcSrcDir),
           environment: {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
           }
