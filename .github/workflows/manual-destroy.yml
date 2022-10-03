@@ -45,7 +45,7 @@ jobs:
           node-version: "16"
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
-      - name: Deploy to AWS
+      - name: Destroy AWS resources
         run: |
           cd cdk-infra
           npm install
