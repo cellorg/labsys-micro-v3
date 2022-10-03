@@ -61,6 +61,9 @@ jobs:
         run: 'sudo npm install -g aws-cdk'
       - name: Deploy to AWS
         run: |
+          echo 'targetEnv: ${{ inputs.targetEnv }}'
+          echo 'microSvcName: ${{ inputs. microSvcName }}'
+          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
           cd cdk-infra
           npm install
           npm run build
