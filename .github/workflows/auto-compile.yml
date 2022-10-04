@@ -10,14 +10,14 @@ on:
     branches:
       - dev
     paths:
-      - 'microa-service/service-src/**'
-      - 'microv-service/service-src/**'
+      - 'microservices/microa/**'
+      - 'microservices/animal/**'
   pull_request:
     branches:
       - dev
     paths:
-      - 'microa-service/service-src/**'
-      - 'microb-service/service-src/**'
+      - 'microservices/microa/**'
+      - 'microservices/animal/**'
 
 jobs:
   build:
@@ -40,15 +40,15 @@ jobs:
                 - 'microservices/microa/**'
               animal:
                 - 'microservices/animal/**'
-    - name: Compile microA service
+    - name: Compile microa service
       if: steps.changes.outputs.microa == 'true'
       run: |
         echo "compiling microa ... "
-        cd microa-service/service-src/
+        cd microservices/microa/
         mvn -B package --file pom.xml
-    - name: Compile microb service
-      if: steps.changes.outputs.microb == 'true'
+    - name: Compile animal service
+      if: steps.changes.outputs.animal == 'true'
       run: |
-        echo "compiling microb ... "
-        cd microb-service/service-src/
+        echo "compiling animal ... "
+        cd microservices/animal/
         mvn -B package --file pom.xml

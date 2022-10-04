@@ -11,7 +11,7 @@ public class DemoController {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Welcome to micorA! parameter dbUrl is " + dbUrl;
+        return "Welcome to micorA! \nparameter dbUrl is " + dbUrl;
     }
 
     @GetMapping("/health")
