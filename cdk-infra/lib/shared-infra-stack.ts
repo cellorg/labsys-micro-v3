@@ -33,7 +33,7 @@ export class SharedInfraStack extends cdk.Stack {
     cdkUtil.tagItem(this.dnsNamespace, cdkUtil.cloudMapDnsNamespaceId);
 
     //@ts-ignore
-    this.securityGroup = new aws_ec2.SecurityGroup(this, securityGroupId, {
+    this.securityGroup = new aws_ec2.SecurityGroup(this, cdkUtil.securityGroupId, {
       securityGroupName: cdkUtil.securityGroupId,
       vpc: this.vpc,
       allowAllOutbound: true,
