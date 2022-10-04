@@ -5,8 +5,10 @@ import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import {HttpMethod, MappingValue, ParameterMapping} from "@aws-cdk/aws-apigatewayv2-alpha";
-import {microSvcApiPathPrefix} from "./cdkUtil";
+import {HttpMethod} from "@aws-cdk/aws-apigatewayv2-alpha";
+
+const microSvcNameResourcePrefix = 'microa';
+const microSvcApiPathPrefix = 'microa';
 
 export interface ServiceInfraStackProps extends cdk.StackProps {
   vpc: Vpc,
@@ -16,7 +18,7 @@ export interface ServiceInfraStackProps extends cdk.StackProps {
   securityGroup: aws_ec2.SecurityGroup
 }
 
-export class ServiceInfraStack extends cdk.Stack {
+export class MicroaStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps) {
     super(scope, id, props);
 
@@ -26,14 +28,14 @@ export class ServiceInfraStack extends cdk.Stack {
     const apiGateway = props.apiGateway;
     const securityGroup = props.securityGroup;
 
-    const clusterId = cdkUtil.microSvcNameResourcePrefix + '-ecsCluster';
+    const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
       clusterName: clusterId,
       vpc: vpc,
     });
     cdkUtil.tagItem(cluster, clusterId);
 
-    const taskDefinitionId = cdkUtil.microSvcNameResourcePrefix + '-taskDefinition'
+    const taskDefinitionId = microSvcNameResourcePrefix + '-taskDefinition'
     const taskDefinition = new aws_ecs.FargateTaskDefinition(this, taskDefinitionId, {
       cpu: 256,
       memoryLimitMiB: 512,
@@ -42,7 +44,7 @@ export class ServiceInfraStack extends cdk.Stack {
 
     //const imageRepo = aws_ecr.Repository.fromRepositoryName(this, cdkUtil.imageRepoId, cdkUtil.imageRepoId);
 
-    const containerId = cdkUtil.microSvcNameResourcePrefix + '-container';
+    const containerId = microSvcNameResourcePrefix + '-container';
     const container = taskDefinition.addContainer(
         containerId,
         {
@@ -68,7 +70,7 @@ export class ServiceInfraStack extends cdk.Stack {
     // securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
     // cdkUtil.tagItem(securityGroup, securityGroupId);
 
-    const fargateServiceId = cdkUtil.microSvcNameResourcePrefix + '-fargateService';
+    const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
     //@ts-ignore
     const fargateService = new aws_ecs.FargateService(this, fargateServiceId, {
       cluster: cluster,
@@ -80,7 +82,7 @@ export class ServiceInfraStack extends cdk.Stack {
       assignPublicIp: false,
       desiredCount: cdkUtil.fargateSvcDesiredCount,
       cloudMapOptions: {
-        name: cdkUtil.microSvcNameResourcePrefix,
+        name: microSvcNameResourcePrefix,
         cloudMapNamespace: dnsNamespace,
         dnsRecordType: DnsRecordType.SRV,
       },
@@ -89,12 +91,11 @@ export class ServiceInfraStack extends cdk.Stack {
 
     apiGateway.addRoutes({
       integration: new apigatewayv2_integrations.HttpServiceDiscoveryIntegration(
-          `${cdkUtil.microSvcNameResourcePrefix}-ServiceDiscoveryIntegration`,
+          `${microSvcNameResourcePrefix}-ServiceDiscoveryIntegration`,
           //@ts-ignore
           fargateService.cloudMapService,
           {
             vpcLink: vpcLink,
-            parameterMapping: new ParameterMapping().overwritePath(MappingValue.custom("/$request.path.proxy"))
           },
       ),
       path: microSvcApiPathPrefix + '/{proxy+}',

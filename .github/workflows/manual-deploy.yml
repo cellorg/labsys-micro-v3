@@ -12,12 +12,8 @@ on:
         options:
           - d1
           - d2
-          - d3
-          - d4
-          - d5
-          - t1
           - t3
-          - u1
+          - prod
       microSvcName:
         type: choice
         description: 'microSvcName'
@@ -68,7 +64,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy --all --require-approval never
+          cdk deploy `${{ inputs. microSvcName }}Stack` --require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs. microSvcName }}

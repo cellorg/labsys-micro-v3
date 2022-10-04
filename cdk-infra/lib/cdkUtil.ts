@@ -21,9 +21,9 @@ export const securityGroupId = applicationName + '-securityGroup';
 
 
 // each microservice resource is prefixed as <env>-<microSvcName>, e.g. d1-animal
-export const microSvcNameResourcePrefix = targetEnv + '-' + microSvcName;
-export const serviceInfraStackId = microSvcNameResourcePrefix + '-ServiceInfraStack';
-export const microSvcApiPathPrefix = '/' + targetEnv + '/' + microSvcName;
+// export const microSvcNameResourcePrefix = targetEnv + '-' + microSvcName;
+// export const serviceInfraStackId = microSvcNameResourcePrefix + '-Stack';
+// export const microSvcApiPathPrefix = '/' + targetEnv + '/' + microSvcName;
 
 export let PDP_OWNER_JDBC_URL = '';
 switch (targetEnv) {

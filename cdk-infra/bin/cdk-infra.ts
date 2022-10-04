@@ -2,7 +2,7 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { SharedInfraStack } from '../lib/shared-infra-stack';
-import { ServiceInfraStack } from '../lib/service-infra-stack'
+import { MicroaStack } from '../lib/microa-stack'
 import {SharedApiGatewayStack} from "../lib/shared-apigateway-infra";
 import * as cdkUtil from '../lib/cdkUtil';
 
@@ -21,7 +21,7 @@ const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
     env: accountRegionEnv
 });
 
-new ServiceInfraStack(app, cdkUtil.serviceInfraStackId, {
+new MicroaStack(app, 'microaStack', {
     env: accountRegionEnv,
     apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,

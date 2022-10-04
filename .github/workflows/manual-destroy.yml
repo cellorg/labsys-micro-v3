@@ -12,12 +12,9 @@ on:
         options:
           - d1
           - d2
-          - d3
-          - d4
-          - d5
-          - t1
           - t3
           - u1
+          - prod
       #microSvcName:
       #  type: choice
       #  description: 'microSvcName'
