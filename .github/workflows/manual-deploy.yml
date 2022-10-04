@@ -64,7 +64,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy `${{ inputs. microSvcName }}Stack` --require-approval never
+          cdk deploy '${{ inputs. microSvcName }}Stack' --require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs. microSvcName }}
