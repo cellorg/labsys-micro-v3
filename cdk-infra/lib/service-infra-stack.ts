@@ -5,7 +5,8 @@ import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import {HttpMethod} from "@aws-cdk/aws-apigatewayv2-alpha";
+import {HttpMethod, MappingValue, ParameterMapping} from "@aws-cdk/aws-apigatewayv2-alpha";
+import {microSvcApiPathPrefix} from "./cdkUtil";
 
 export interface ServiceInfraStackProps extends cdk.StackProps {
   vpc: Vpc,
@@ -93,9 +94,10 @@ export class ServiceInfraStack extends cdk.Stack {
           fargateService.cloudMapService,
           {
             vpcLink: vpcLink,
+            parameterMapping: new ParameterMapping().overwritePath(MappingValue.custom("/$request.path.proxy"))
           },
       ),
-      path: '/microa/{proxy+}',
+      path: microSvcApiPathPrefix + '/{proxy+}',
       methods: [HttpMethod.GET],
     });
 

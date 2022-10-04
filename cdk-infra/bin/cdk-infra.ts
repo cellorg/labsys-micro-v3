@@ -13,15 +13,15 @@ const accountRegionEnv = {
 
 const app = new cdk.App();
 
-const sharedApiGatewayStack = new SharedApiGatewayStack(app, cdkUtil.SharedApiGatewayStackId, {
+const sharedApiGatewayStack = new SharedApiGatewayStack(app, cdkUtil.sharedApiGatewayStackId, {
     env: accountRegionEnv
 });
 
-const sharedInfraStack = new SharedInfraStack(app, cdkUtil.SharedInfraStackId, {
+const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
     env: accountRegionEnv
 });
 
-new ServiceInfraStack(app, cdkUtil.ServiceInfraStackId, {
+new ServiceInfraStack(app, cdkUtil.serviceInfraStackId, {
     env: accountRegionEnv,
     apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,

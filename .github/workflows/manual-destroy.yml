@@ -18,14 +18,14 @@ on:
           - t1
           - t3
           - u1
-      microSvcName:
-        type: choice
-        description: 'microSvcName'
-        default: 'microa'
-        required: true
-        options:
-          - microa
-          - animal
+      #microSvcName:
+      #  type: choice
+      #  description: 'microSvcName'
+      #  default: 'microa'
+      #  required: true
+      #  options:
+      #    - microa
+      #    - animal
 
 jobs:
   buildDockerImage:
@@ -54,7 +54,7 @@ jobs:
           cdk destroy --all --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
-          microSvcName: ${{ inputs. microSvcName }}
+          #microSvcName: ${{ inputs. microSvcName }}
 
           
 
