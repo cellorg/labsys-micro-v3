@@ -26,6 +26,10 @@ on:
         description: 'fargateSvcDesiredCount'
         default: '1'
         required: true
+      maxAzs:
+        description: 'maxAzs'
+        default: '1'
+        required: true
 
 jobs:
   buildDockerImage:
@@ -64,11 +68,12 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy '${{ inputs. microSvcName }}Stack' --require-approval never
+          cdk deploy 'labsys-${{ inputs. microSvcName }}Stack' labsys-SharedApiGatewayStack ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs. microSvcName }}
           fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
+          maxAzs: ${{ inputs.maxAzs }}
 
           
 

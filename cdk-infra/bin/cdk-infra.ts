@@ -21,7 +21,7 @@ const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
     env: accountRegionEnv
 });
 
-new MicroaStack(app, 'microaStack', {
+new MicroaStack(app, cdkUtil.applicationName + '-microaStack', {
     env: accountRegionEnv,
     apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,

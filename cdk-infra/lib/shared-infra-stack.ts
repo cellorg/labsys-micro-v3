@@ -14,7 +14,8 @@ export class SharedInfraStack extends cdk.Stack {
     super(scope, id, props);
 
     this.vpc = new aws_ec2.Vpc(this, cdkUtil.vpcId, {
-      vpcName: cdkUtil.vpcId
+      vpcName: cdkUtil.vpcId,
+      maxAzs: cdkUtil.maxAzs,
     });
     cdkUtil.tagItem(this.vpc, cdkUtil.vpcId);
 

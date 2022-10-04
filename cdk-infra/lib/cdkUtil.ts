@@ -3,7 +3,8 @@ import * as cdk from 'aws-cdk-lib';
 // input parameters
 const targetEnv = process.env.targetEnv || 'd1';
 const microSvcName = process.env.microSvcName || 'microa';
-export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1') ;
+export const maxAzs = Number(process.env.maxAzs || '1');
+export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1');
 //export const imageTag = process.env.imageTag || 'dev'; // image tag as branch
 
 // The microservice image will be built from the microservices' source directory
