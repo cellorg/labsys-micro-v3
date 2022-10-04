@@ -1,4 +1,4 @@
-package com.example.microa.controller;
+package com.example.animal.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,11 +11,11 @@ public class DemoController {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Welcome to micora service! >>>>>> parameter dbUrl is " + dbUrl;
+        return "Welcome to animal service! >>>>>> parameter dbUrl is " + dbUrl;
     }
 
     @GetMapping("/health")
     public String healthcheck() {
-        return "microa is healthy!";
+        return "animal service is healthy!";
     }
 }

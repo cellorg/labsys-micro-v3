@@ -68,7 +68,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy 'labsys-${{ inputs. microSvcName }}Stack' labsys-SharedApiGatewayStack ---require-approval never
+          cdk deploy 'labsys-${{ inputs. microSvcName }}-stack' labsys-SharedApiGatewayStack ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs. microSvcName }}

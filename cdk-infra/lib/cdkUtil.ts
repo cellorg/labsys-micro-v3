@@ -1,4 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
+import {Vpc} from "aws-cdk-lib/aws-ec2";
+import * as apigatewayv2 from "@aws-cdk/aws-apigatewayv2-alpha";
+import {PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
+import {aws_ec2} from "aws-cdk-lib";
 
 // input parameters
 const targetEnv = process.env.targetEnv || 'd1';
@@ -13,13 +17,20 @@ export const microSvcSrcDir = '../microservices/' + microSvcName || '../microser
 // We will use one API Gateway, VPC, VPC LInk, Cloud Map for all microservcies in each env.
 // shared infra resources are prefixed as <env>-labsys, e.g. d1-labsys
 export const applicationName = 'labsys';
-export const sharedApiGatewayStackId =  applicationName + '-SharedApiGatewayStack';
-export const sharedInfraStackId = applicationName + '-SharedInfraStack';
+export const sharedApiGatewayStackId =  applicationName + '-sharedApiGateway-stack';
+export const sharedInfraStackId = applicationName + '-sharedInfra-stack';
 export const vpcId = applicationName + '-vpc';
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
 export const securityGroupId = applicationName + '-securityGroup';
 
+export interface ServiceInfraStackProps extends cdk.StackProps {
+    vpc: Vpc,
+    vpcLink: apigatewayv2.VpcLink,
+    dnsNamespace: PrivateDnsNamespace,
+    apiGateway: apigatewayv2.HttpApi,
+    securityGroup: aws_ec2.SecurityGroup
+}
 
 // each microservice resource is prefixed as <env>-<microSvcName>, e.g. d1-animal
 // export const microSvcNameResourcePrefix = targetEnv + '-' + microSvcName;

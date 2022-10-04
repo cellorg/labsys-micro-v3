@@ -7,26 +7,17 @@ import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
 import {HttpMethod} from "@aws-cdk/aws-apigatewayv2-alpha";
 
-const microSvcNameResourcePrefix = 'microa';
-const microSvcApiPathPrefix = '/microa';
-
-export interface ServiceInfraStackProps extends cdk.StackProps {
-  vpc: Vpc,
-  vpcLink: apigatewayv2.VpcLink,
-  dnsNamespace: PrivateDnsNamespace,
-  apiGateway: apigatewayv2.HttpApi,
-  securityGroup: aws_ec2.SecurityGroup
-}
-
-export class MicroaStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps) {
+class MicroSvcBaseStack extends cdk.Stack {
+  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props);
 
-    const vpc = props.vpc;
-    const vpcLink = props.vpcLink;
-    const dnsNamespace = props.dnsNamespace;
-    const apiGateway = props.apiGateway;
-    const securityGroup = props.securityGroup;
+    const vpc: Vpc = props.vpc;
+    const vpcLink: apigatewayv2.VpcLink = props.vpcLink;
+    const dnsNamespace: PrivateDnsNamespace = props.dnsNamespace;
+    const apiGateway: apigatewayv2.HttpApi = props.apiGateway;
+    const securityGroup: aws_ec2.SecurityGroup = props.securityGroup;
+    const microSvcNameResourcePrefix: string = microSvcName;
+    const microSvcApiPathPrefix = '/' + microSvcName;
 
     const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
@@ -103,4 +94,22 @@ export class MicroaStack extends cdk.Stack {
     });
 
   }
+}
+
+
+class MicroaStack extends MicroSvcBaseStack {
+  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
+    super(scope, id, props, microSvcName);
+  }
+}
+
+class AnimalStack extends MicroSvcBaseStack {
+  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
+    super(scope, id, props, microSvcName);
+  }
+}
+
+module.exports = {
+  AnimalStack: AnimalStack,
+  MicroaStack: MicroaStack,
 }
