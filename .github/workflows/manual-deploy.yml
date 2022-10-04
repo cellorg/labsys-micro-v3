@@ -71,7 +71,7 @@ jobs:
           cdk deploy 'labsys-${{ inputs. microSvcName }}-stack' labsys-sharedApiGateway-stack ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
-          microSvcName: ${{ inputs. microSvcName }}
+          microSvcName: ${{ inputs.microSvcName }}
           fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
           maxAzs: ${{ inputs.maxAzs }}
 
