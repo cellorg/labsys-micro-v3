@@ -8,7 +8,7 @@ import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integratio
 import {HttpMethod} from "@aws-cdk/aws-apigatewayv2-alpha";
 
 const microSvcNameResourcePrefix = 'microa';
-const microSvcApiPathPrefix = 'microa';
+const microSvcApiPathPrefix = '/microa';
 
 export interface ServiceInfraStackProps extends cdk.StackProps {
   vpc: Vpc,
