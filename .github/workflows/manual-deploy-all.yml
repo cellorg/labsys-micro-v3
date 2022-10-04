@@ -1,0 +1,77 @@
+name: Manual deploy all
+
+on:
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      targetEnv:
+        type: choice
+        description: 'targetEnv'
+        default: 'd1'
+        required: true
+        options:
+          - d1
+          - d2
+          - t3
+          - prod
+      fargateSvcDesiredCount:
+        description: 'fargateSvcDesiredCount'
+        default: '1'
+        required: true
+      maxAzs:
+        description: 'maxAzs'
+        default: '1'
+        required: true
+
+jobs:
+  buildDockerImage:
+    name: manual deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: maven
+      - name: Build with Maven
+        run: |
+          cd microservices/microa
+          mvn -B package --file pom.xml
+          cd ../animal
+          mvn -B package --file pom.xml
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.WENDYADMIN_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.WENDYADMIN_SECRET_KEY }}
+          aws-region: 'us-east-1'
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: "16"
+      - name: Install AWS CDK
+        run: 'sudo npm install -g aws-cdk'
+      - name: Deploy to AWS
+        run: |
+          echo 'targetEnv: ${{ inputs.targetEnv }}'
+          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
+          cd cdk-infra
+          npm install
+          npm run build
+          cdk bootstrap
+          cdk deploy --all ---require-approval never
+        env:
+          targetEnv: ${{ inputs.targetEnv }}
+          fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
+          maxAzs: ${{ inputs.maxAzs }}
+
+          
+
+
+
+        
+      
+      
+      

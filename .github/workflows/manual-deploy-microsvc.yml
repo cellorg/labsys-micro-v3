@@ -1,4 +1,4 @@
-name: Manual deploy
+name: Manual deploy Micro service
 
 on:
   workflow_dispatch:
@@ -68,7 +68,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy 'labsys-${{ inputs. microSvcName }}-stack' labsys-sharedApiGateway-stack ---require-approval never
+          cdk deploy 'labsys-${{ inputs. microSvcName }}-stack' ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs.microSvcName }}
