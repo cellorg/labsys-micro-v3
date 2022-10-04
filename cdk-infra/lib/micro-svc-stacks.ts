@@ -3,21 +3,24 @@ import * as cdk from 'aws-cdk-lib';
 import { aws_ec2, aws_ecs } from "aws-cdk-lib";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
-import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
-import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import {HttpMethod} from "@aws-cdk/aws-apigatewayv2-alpha";
+import * as cloudmap from 'aws-cdk-lib/aws-servicediscovery';
+
+export interface ServiceInfraStackProps extends cdk.StackProps {
+  vpc: Vpc,
+  dnsNamespace: PrivateDnsNamespace,
+  securityGroup: aws_ec2.SecurityGroup
+}
 
 class MicroSvcBaseStack extends cdk.Stack {
-  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
+  public readonly cloudMapSvc: cloudmap.IService;
+
+  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props);
 
     const vpc: Vpc = props.vpc;
-    const vpcLink: apigatewayv2.VpcLink = props.vpcLink;
     const dnsNamespace: PrivateDnsNamespace = props.dnsNamespace;
-    const apiGateway: apigatewayv2.HttpApi = props.apiGateway;
     const securityGroup: aws_ec2.SecurityGroup = props.securityGroup;
-    const microSvcNameResourcePrefix: string = microSvcName;
-    const microSvcApiPathPrefix = '/' + microSvcName;
+    const microSvcNameResourcePrefix: string = cdkUtil.applicationName + '-' + microSvcName;
 
     const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
@@ -33,15 +36,12 @@ class MicroSvcBaseStack extends cdk.Stack {
     });
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
-    //const imageRepo = aws_ecr.Repository.fromRepositoryName(this, cdkUtil.imageRepoId, cdkUtil.imageRepoId);
-
     const containerId = microSvcNameResourcePrefix + '-container';
     const container = taskDefinition.addContainer(
         containerId,
         {
           containerName: containerId,
-          //image: aws_ecs.ContainerImage.fromEcrRepository(imageRepo, cdkUtil.imageTag),
-          image: aws_ecs.ContainerImage.fromAsset(cdkUtil.microSvcSrcDir),
+          image: aws_ecs.ContainerImage.fromAsset('../microservices/' + microSvcName),
           environment: {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
           }
@@ -50,16 +50,6 @@ class MicroSvcBaseStack extends cdk.Stack {
     );
     container.addPortMappings({ containerPort: 8080 });
     cdkUtil.tagItem(container, containerId);
-
-    // const securityGroupId = cdkUtil.microSvcNameResourcePrefix + '-securityGroup';
-    // const securityGroup = new aws_ec2.SecurityGroup(this, securityGroupId, {
-    //   securityGroupName: securityGroupId,
-    //   vpc: vpc,
-    //   allowAllOutbound: true,
-    //   description: 'Allow traffic to Fargate HTTP API service.',
-    // });
-    // securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
-    // cdkUtil.tagItem(securityGroup, securityGroupId);
 
     const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
     //@ts-ignore
@@ -80,31 +70,20 @@ class MicroSvcBaseStack extends cdk.Stack {
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
 
-    apiGateway.addRoutes({
-      integration: new apigatewayv2_integrations.HttpServiceDiscoveryIntegration(
-          `${microSvcNameResourcePrefix}-ServiceDiscoveryIntegration`,
-          //@ts-ignore
-          fargateService.cloudMapService,
-          {
-            vpcLink: vpcLink,
-          },
-      ),
-      path: microSvcApiPathPrefix + '/{proxy+}',
-      methods: [HttpMethod.ANY],
-    });
-
+    //@ts-ignore
+    this.cloudMapSvc = fargateService.cloudMapService;
   }
 }
 
 
 class MicroaStack extends MicroSvcBaseStack {
-  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
+  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props, microSvcName);
   }
 }
 
 class AnimalStack extends MicroSvcBaseStack {
-  constructor(scope: cdk.App, id: string, props: cdkUtil.ServiceInfraStackProps, microSvcName: string) {
+  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props, microSvcName);
   }
 }

@@ -4,7 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as cdkUtil from '../lib/cdkUtil';
 import { SharedInfraStack } from '../lib/shared-infra-stack';
 import { SharedApiGatewayStack } from '../lib/shared-apigateway-infra';
-import { ServiceInfraStackProps } from '../lib/cdkUtil';
+import { ServiceInfraStackProps } from '../lib/micro-svc-stacks';
 const svcStacks = require('../lib/micro-svc-stacks');
 
 const accountRegionEnv = {
@@ -14,23 +14,48 @@ const accountRegionEnv = {
 
 const app = new cdk.App();
 
-const sharedApiGatewayStack = new SharedApiGatewayStack(app, cdkUtil.sharedApiGatewayStackId, {
-    env: accountRegionEnv
-});
-
 const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
     env: accountRegionEnv
 });
 
 const svcProps : ServiceInfraStackProps = {
     env: accountRegionEnv,
-    apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,
-    vpcLink: sharedInfraStack.vpcLink,
     dnsNamespace: sharedInfraStack.dnsNamespace,
     securityGroup: sharedInfraStack.securityGroup
 }
 
-new svcStacks.MicroaStack(app, cdkUtil.applicationName + '-microa-stack', svcProps, 'microa');
+const microaStack = new svcStacks.MicroaStack(
+    app,
+    cdkUtil.applicationName + '-microa-stack',
+    svcProps,
+    'microa'
+);
 
-new svcStacks.AnimalStack(app, cdkUtil.applicationName + '-animal-stack', svcProps, 'animal');
+const animalStack = new svcStacks.AnimalStack(
+    app,
+    cdkUtil.applicationName + '-animal-stack',
+    svcProps,
+    'animal'
+);
+
+
+cdkUtil.cloudMapSvcArray.push({
+    micorSvcName: 'microa',
+    cloudMapSvc: microaStack.cloudMapSvc
+});
+cdkUtil.cloudMapSvcArray.push({
+    micorSvcName: 'animal',
+    cloudMapSvc: animalStack.cloudMapSvc
+});
+
+
+new SharedApiGatewayStack(
+    app,
+    cdkUtil.sharedApiGatewayStackId,
+    {
+        env: accountRegionEnv,
+        vpcLink: sharedInfraStack.vpcLink
+    },
+    cdkUtil.cloudMapSvcArray
+);
