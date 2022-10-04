@@ -16,6 +16,6 @@ public class DemoController {
 
     @GetMapping("/health")
     public String healthcheck() {
-        return "animal service is healthy!";
+        return "Animal service is healthy!";
     }
 }

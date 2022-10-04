@@ -90,7 +90,7 @@ class MicroSvcBaseStack extends cdk.Stack {
           },
       ),
       path: microSvcApiPathPrefix + '/{proxy+}',
-      methods: [HttpMethod.GET],
+      methods: [HttpMethod.ANY],
     });
 
   }
