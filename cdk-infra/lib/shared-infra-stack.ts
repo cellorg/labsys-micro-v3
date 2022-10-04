@@ -24,12 +24,23 @@ export class SharedInfraStack extends cdk.Stack {
     });
     cdkUtil.tagItem(this.vpcLink, cdkUtil.vpcLinkId);
 
+    //@ts-ignore
     this.dnsNamespace = new aws_servicediscovery.PrivateDnsNamespace(this, cdkUtil.cloudMapDnsNamespaceId,{
       name: `${cdkUtil.applicationName}.local`,
-      vpc: this.vpc as aws_ec2.IVpc,
+      vpc: this.vpc,
       description: 'Private DnsNamespace for Microservices',
     });
     cdkUtil.tagItem(this.dnsNamespace, cdkUtil.cloudMapDnsNamespaceId);
+
+    //@ts-ignore
+    this.securityGroup = new aws_ec2.SecurityGroup(this, securityGroupId, {
+      securityGroupName: cdkUtil.securityGroupId,
+      vpc: this.vpc,
+      allowAllOutbound: true,
+      description: 'Allow traffic to Fargate HTTP API service.',
+    });
+    this.securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
+    cdkUtil.tagItem(this.securityGroup, cdkUtil.securityGroupId);
 
   }
 }

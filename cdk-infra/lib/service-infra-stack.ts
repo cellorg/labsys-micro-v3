@@ -11,7 +11,8 @@ export interface ServiceInfraStackProps extends cdk.StackProps {
   vpc: Vpc,
   vpcLink: apigatewayv2.VpcLink,
   dnsNamespace: PrivateDnsNamespace,
-  apiGateway: apigatewayv2.HttpApi
+  apiGateway: apigatewayv2.HttpApi,
+  securityGroup: aws_ec2.SecurityGroup
 }
 
 export class ServiceInfraStack extends cdk.Stack {
@@ -22,6 +23,7 @@ export class ServiceInfraStack extends cdk.Stack {
     const vpcLink = props.vpcLink;
     const dnsNamespace = props.dnsNamespace;
     const apiGateway = props.apiGateway;
+    const securityGroup = props.securityGroup;
 
     const clusterId = cdkUtil.microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
@@ -55,17 +57,18 @@ export class ServiceInfraStack extends cdk.Stack {
     container.addPortMappings({ containerPort: 8080 });
     cdkUtil.tagItem(container, containerId);
 
-    const securityGroupId = cdkUtil.microSvcNameResourcePrefix + '-securityGroup';
-    const securityGroup = new aws_ec2.SecurityGroup(this, securityGroupId, {
-      securityGroupName: securityGroupId,
-      vpc: vpc,
-      allowAllOutbound: true,
-      description: 'Allow traffic to Fargate HTTP API service.',
-    });
-    securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
-    cdkUtil.tagItem(securityGroup, securityGroupId);
+    // const securityGroupId = cdkUtil.microSvcNameResourcePrefix + '-securityGroup';
+    // const securityGroup = new aws_ec2.SecurityGroup(this, securityGroupId, {
+    //   securityGroupName: securityGroupId,
+    //   vpc: vpc,
+    //   allowAllOutbound: true,
+    //   description: 'Allow traffic to Fargate HTTP API service.',
+    // });
+    // securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
+    // cdkUtil.tagItem(securityGroup, securityGroupId);
 
     const fargateServiceId = cdkUtil.microSvcNameResourcePrefix + '-fargateService';
+    //@ts-ignore
     const fargateService = new aws_ecs.FargateService(this, fargateServiceId, {
       cluster: cluster,
       securityGroups: [securityGroup],

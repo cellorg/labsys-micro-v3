@@ -11,16 +11,19 @@ export const microSvcSrcDir = '../microservices/' + microSvcName || '../microser
 
 // We will use one API Gateway, VPC, VPC LInk, Cloud Map for all microservcies in each env.
 // shared infra resources are prefixed as <env>-labsys, e.g. d1-labsys
-export const applicationName = targetEnv + '-labsys';
-export const SharedApiGatewayStackId = applicationName + '-SharedApiGatewayStack';
+export const applicationName = 'labsys';
+export const SharedApiGatewayStackId =  applicationName + '-SharedApiGatewayStack';
 export const SharedInfraStackId = applicationName + '-SharedInfraStack';
-export const ServiceInfraStackId = applicationName + '-ServiceInfraStack';
 export const vpcId = applicationName + '-vpc';
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
+export const securityGroupId = applicationName + '-securityGroup';
+
 
 // each microservice resource is prefixed as <env>-<microSvcName>, e.g. d1-animal
 export const microSvcNameResourcePrefix = targetEnv + '-' + microSvcName;
+export const ServiceInfraStackId = microSvcNameResourcePrefix + '-ServiceInfraStack';
+
 
 export let PDP_OWNER_JDBC_URL = '';
 switch (targetEnv) {

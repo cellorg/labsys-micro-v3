@@ -26,5 +26,6 @@ new ServiceInfraStack(app, cdkUtil.ServiceInfraStackId, {
     apiGateway: sharedApiGatewayStack.apiGateway,
     vpc: sharedInfraStack.vpc,
     vpcLink: sharedInfraStack.vpcLink,
-    dnsNamespace: sharedInfraStack.dnsNamespace
+    dnsNamespace: sharedInfraStack.dnsNamespace,
+    securityGroup: sharedInfraStack.securityGroup
 });
