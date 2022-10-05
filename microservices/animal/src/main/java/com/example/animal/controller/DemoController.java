@@ -11,7 +11,7 @@ public class DemoController {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Welcome to Animal service! >>>>>> parameter dbUrl is " + dbUrl;
+        return "Hi from Animal service! >>>>>> parameter dbUrl is " + dbUrl;
     }
 
     @GetMapping("/health")
