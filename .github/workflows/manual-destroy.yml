@@ -25,7 +25,7 @@ on:
       #    - animal
 
 jobs:
-  buildDockerImage:
+  destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
     steps:
