@@ -26,10 +26,6 @@ on:
         description: 'fargateSvcDesiredCount'
         default: '1'
         required: true
-      maxAzs:
-        description: 'maxAzs'
-        default: '1'
-        required: true
 
 jobs:
   deployMicroSvc:
@@ -81,7 +77,7 @@ jobs:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs.microSvcName }}
           fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
-          maxAzs: ${{ inputs.maxAzs }}
+
 
           
 
