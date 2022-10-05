@@ -38,7 +38,7 @@ switch (targetEnv) {
         break;
 }
 
-export const dummy = 'OK';
+export const dummy = 'ok';
 
 
 
