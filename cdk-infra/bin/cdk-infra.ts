@@ -5,7 +5,7 @@ import * as cdkUtil from '../lib/cdkUtil';
 import { SharedInfraStack } from '../lib/shared-infra-stack';
 import { SharedApiGatewayStack } from '../lib/shared-apigateway-infra';
 import { ServiceInfraStackProps } from '../lib/micro-svc-stacks';
-const svcStacks = require('../lib/micro-svc-stacks');
+import { MicroSvcStack } from '../lib/micro-svc-stacks';
 
 const accountRegionEnv = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -25,14 +25,14 @@ const svcProps : ServiceInfraStackProps = {
     securityGroup: sharedInfraStack.securityGroup
 }
 
-const microaStack = new svcStacks.MicroaStack(
+const microaStack = new MicroSvcStack(
     app,
     cdkUtil.applicationName + '-microa-stack',
     svcProps,
     'microa'
 );
 
-const animalStack = new svcStacks.AnimalStack(
+const animalStack = new MicroSvcStack(
     app,
     cdkUtil.applicationName + '-animal-stack',
     svcProps,

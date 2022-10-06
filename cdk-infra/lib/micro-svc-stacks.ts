@@ -11,7 +11,7 @@ export interface ServiceInfraStackProps extends cdk.StackProps {
   securityGroup: aws_ec2.SecurityGroup
 }
 
-class MicroSvcBaseStack extends cdk.Stack {
+export class MicroSvcStack extends cdk.Stack {
   public readonly cloudMapSvc: cloudmap.IService;
 
   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
@@ -76,19 +76,19 @@ class MicroSvcBaseStack extends cdk.Stack {
 }
 
 
-class MicroaStack extends MicroSvcBaseStack {
-  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
-    super(scope, id, props, microSvcName);
-  }
-}
-
-class AnimalStack extends MicroSvcBaseStack {
-  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
-    super(scope, id, props, microSvcName);
-  }
-}
-
-module.exports = {
-  AnimalStack: AnimalStack,
-  MicroaStack: MicroaStack,
-}
+// class MicroaStack extends MicroSvcBaseStack {
+//   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
+//     super(scope, id, props, microSvcName);
+//   }
+// }
+//
+// class AnimalStack extends MicroSvcBaseStack {
+//   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
+//     super(scope, id, props, microSvcName);
+//   }
+// }
+//
+// module.exports = {
+//   AnimalStack: AnimalStack,
+//   MicroaStack: MicroaStack,
+// }
