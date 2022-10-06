@@ -13,7 +13,7 @@ export interface ApiGwStackProps extends cdk.StackProps {
 export class SharedApiGatewayStack extends cdk.Stack {
 
     constructor(scope: Construct, id: string, props: ApiGwStackProps,
-                cloudMapSvcArray: { micorSvcName: string; cloudMapSvc: cloudmap.Service; }[]) {
+                cloudMapSvcArray: { micorSvcName: string; cloudMapSvc: cloudmap.IService; }[]) {
         super(scope, id, props);
 
         const vpcLink = props.vpcLink;

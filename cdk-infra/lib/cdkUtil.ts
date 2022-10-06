@@ -26,7 +26,7 @@ export function tagItem(item: any, itemProgram: string) {
     cdk.Tags.of(item).add('deptcode', '245');
 }
 
-export const cloudMapSvcArray: { micorSvcName: string; cloudMapSvc: cloudmap.Service }[] = [];
+export const cloudMapSvcArray: { micorSvcName: string; cloudMapSvc: cloudmap.IService }[] = [];
 
 export let PDP_OWNER_JDBC_URL = '';
 switch (targetEnv) {
