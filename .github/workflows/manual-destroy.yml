@@ -29,6 +29,12 @@ jobs:
     name: manual destroy
     runs-on: ubuntu-latest
     steps:
+      - name: Display input parameters
+        run: |
+          echo 'targetEnv: ${{ inputs.targetEnv }}'
+          echo 'microSvcName: ${{ inputs. microSvcName }}'
+          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
+          echo 'branch: ${{ github.head_ref || github.ref_name }}'
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}

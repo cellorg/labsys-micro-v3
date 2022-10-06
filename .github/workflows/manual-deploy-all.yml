@@ -28,6 +28,12 @@ jobs:
     name: manual deploy
     runs-on: ubuntu-latest
     steps:
+      - name: Display input parameters
+        run: |
+          echo 'targetEnv: ${{ inputs.targetEnv }}'
+          echo 'microSvcName: ${{ inputs. microSvcName }}'
+          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
+          echo 'branch: ${{ github.head_ref || github.ref_name }}'
       - uses: actions/checkout@v3
       - name: Set up JDK 17
         uses: actions/setup-java@v3
