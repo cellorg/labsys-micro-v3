@@ -1,4 +1,4 @@
-name: Manual deploy to all env
+name: Manual deploy all
 
 on:
   workflow_dispatch:
