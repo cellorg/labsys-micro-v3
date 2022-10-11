@@ -1,6 +1,6 @@
 import * as cdkUtil from './cdkUtil'
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2, aws_ecs } from "aws-cdk-lib";
+import { aws_ec2, aws_ecs, aws_logs } from "aws-cdk-lib";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
@@ -43,6 +43,19 @@ export class MicroSvcStack extends cdk.Stack {
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
     const containerId = microSvcNameResourcePrefix + '-container';
+    const healthCheckCommand = `curl -f http://localhost/${microSvcName}/health || exit 1`
+    const svcLogGroup = new aws_logs.LogGroup(
+        this,
+        microSvcName + '-ServiceLogGroup',
+        {
+          logGroupName: '/ecs/' + microSvcName,
+          removalPolicy: cdk.RemovalPolicy.DESTROY,
+        }
+    );
+    const svcLogDriver = new aws_ecs.AwsLogDriver({
+      logGroup: svcLogGroup,
+      streamPrefix: microSvcName + 'Service',
+    });
     const container = taskDefinition.addContainer(
         containerId,
         {
@@ -50,8 +63,11 @@ export class MicroSvcStack extends cdk.Stack {
           image: aws_ecs.ContainerImage.fromAsset('../microservices/' + microSvcName),
           environment: {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
-          }
-          //logging: ,
+          },
+          logging: svcLogDriver,
+          healthCheck: {
+            command: [ 'CMD-SHELL', healthCheckCommand ],
+          },
         }
     );
     container.addPortMappings({ containerPort: 8080 });
@@ -119,20 +135,3 @@ export class MicroSvcStack extends cdk.Stack {
   }
 }
 
-
-// class MicroaStack extends MicroSvcBaseStack {
-//   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
-//     super(scope, id, props, microSvcName);
-//   }
-// }
-//
-// class AnimalStack extends MicroSvcBaseStack {
-//   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
-//     super(scope, id, props, microSvcName);
-//   }
-// }
-//
-// module.exports = {
-//   AnimalStack: AnimalStack,
-//   MicroaStack: MicroaStack,
-// }
