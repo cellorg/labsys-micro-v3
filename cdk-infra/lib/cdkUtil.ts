@@ -34,6 +34,12 @@ switch (targetEnv) {
     case 'd2':
         PDP_OWNER_JDBC_URL = 'fake:jdbc:url:d2';
         break;
+    case 't3':
+        PDP_OWNER_JDBC_URL = 'fake:jdbc:url:t3';
+        break;
+    case 'prod':
+        PDP_OWNER_JDBC_URL = 'fake:jdbc:url:prod';
+        break;
 }
 
 
