@@ -43,7 +43,7 @@ export class MicroSvcStack extends cdk.Stack {
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
     const containerId = microSvcNameResourcePrefix + '-container';
-    const healthCheckCommand = `curl -f http://localhost:8080/${microSvcName}/health || exit 1`
+    //const healthCheckCommand = `curl -f http://localhost:8080/${microSvcName}/health || exit 1`
     const svcLogGroup = new aws_logs.LogGroup(
         this,
         microSvcName + '-ServiceLogGroup',
@@ -65,9 +65,9 @@ export class MicroSvcStack extends cdk.Stack {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
           },
           logging: svcLogDriver,
-          healthCheck: {
-            command: [ 'CMD-SHELL', healthCheckCommand ],
-          },
+          // healthCheck: {
+          //   command: [ 'CMD-SHELL', healthCheckCommand ],
+          // },
         }
     );
     container.addPortMappings({ containerPort: 8080 });
