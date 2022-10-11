@@ -43,7 +43,7 @@ export class MicroSvcStack extends cdk.Stack {
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
     const containerId = microSvcNameResourcePrefix + '-container';
-    const healthCheckCommand = `curl -f http://localhost/${microSvcName}/health || exit 1`
+    const healthCheckCommand = `curl -f http://localhost:8080/${microSvcName}/health || exit 1`
     const svcLogGroup = new aws_logs.LogGroup(
         this,
         microSvcName + '-ServiceLogGroup',
