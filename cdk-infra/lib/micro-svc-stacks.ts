@@ -71,7 +71,6 @@ export class MicroSvcStack extends cdk.Stack {
           // },
         }
     );
-    //container.addPortMappings({ containerPort: 8080 });
     cdkUtil.tagItem(container, containerId);
 
     const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
@@ -88,10 +87,11 @@ export class MicroSvcStack extends cdk.Stack {
       cloudMapOptions: {
         name: microSvcNameResourcePrefix,
         cloudMapNamespace: dnsNamespace,
-        dnsRecordType: DnsRecordType.SRV,
+        dnsRecordType: DnsRecordType.A,
       },
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
+
 
     // Open issues: https://github.com/aws/aws-cdk/issues/12337
     // const apiGatewayId = cdkUtil.applicationName + '-apiGateway';
