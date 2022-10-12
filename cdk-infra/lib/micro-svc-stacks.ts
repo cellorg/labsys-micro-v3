@@ -1,6 +1,6 @@
 import * as cdkUtil from './cdkUtil'
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2, aws_ecs, aws_logs } from "aws-cdk-lib";
+import {aws_ec2, aws_ecs, aws_logs, Duration} from "aws-cdk-lib";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
@@ -91,6 +91,13 @@ export class MicroSvcStack extends cdk.Stack {
       },
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
+
+    const scaling = fargateService.autoScaleTaskCount({ maxCapacity: 6, minCapacity: 1 });
+    scaling.scaleOnCpuUtilization('CpuScaling', {
+      targetUtilizationPercent: 50,
+      scaleInCooldown: Duration.seconds(60),
+      scaleOutCooldown: Duration.seconds(60)
+    });
 
     // Open issues: https://github.com/aws/aws-cdk/issues/12337
     // const apiGatewayId = cdkUtil.applicationName + '-apiGateway';
