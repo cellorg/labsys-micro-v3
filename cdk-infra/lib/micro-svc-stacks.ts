@@ -87,11 +87,10 @@ export class MicroSvcStack extends cdk.Stack {
       cloudMapOptions: {
         name: microSvcNameResourcePrefix,
         cloudMapNamespace: dnsNamespace,
-        dnsRecordType: DnsRecordType.A,
+        dnsRecordType: DnsRecordType.SRV,
       },
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
-
 
     // Open issues: https://github.com/aws/aws-cdk/issues/12337
     // const apiGatewayId = cdkUtil.applicationName + '-apiGateway';
