@@ -65,12 +65,13 @@ export class MicroSvcStack extends cdk.Stack {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
           },
           logging: svcLogDriver,
+          portMappings: [{ containerPort: 8080 }],
           // healthCheck: {
           //   command: [ 'CMD-SHELL', healthCheckCommand ],
           // },
         }
     );
-    container.addPortMappings({ containerPort: 8080 });
+    //container.addPortMappings({ containerPort: 8080 });
     cdkUtil.tagItem(container, containerId);
 
     const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
