@@ -21,7 +21,7 @@ on:
 #        required: true
 #        type: boolean
 
-run-name: Destroy stacks in ${{ inputs.targetEnv }} by @${{ github.actor }}, keepSameEndpoint=${{ inputs.keepApiGateway }}
+run-name: Destroy stacks in ${{ inputs.targetEnv }}
 
 jobs:
   destroyAllStacks:
