@@ -89,7 +89,10 @@ export class MicroSvcStack extends cdk.Stack {
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
 
-    const scaling = fargateService.autoScaleTaskCount({ maxCapacity: 6, minCapacity: 1 });
+    const scaling = fargateService.autoScaleTaskCount({
+      maxCapacity: 6,
+      minCapacity: cdkUtil.fargateSvcDesiredCount
+    });
     scaling.scaleOnCpuUtilization('CpuScaling', {
       targetUtilizationPercent: 50,
       scaleInCooldown: Duration.seconds(60),
