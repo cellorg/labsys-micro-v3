@@ -15,14 +15,24 @@ on:
           - t3
           - u1
           - prod
+#      keepApiGateway:
+#        description: 'keep the same endpoint'
+#        default: true
+#        required: true
+#        type: boolean
 
-run-name: Destroy all stacks in ${{ inputs.targetEnv }} by @${{ github.actor }}
+run-name: Destroy stacks in ${{ inputs.targetEnv }} by @${{ github.actor }}, keepSameEndpoint=${{ inputs.keepApiGateway }}
 
 jobs:
   destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
     steps:
+#      - name: Set destroy command - keepApiGateway=true
+#        if:
+#        run: |
+#          # repository name has to be lower case, https://github.com/docker/build-push-action/issues/37
+#          echo destroyCommand=$(echo ${{ inputs.keepApiGateway }} | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
       - name: Display input parameters
         run: |
           echo 'targetEnv: ${{ inputs.targetEnv }}'
@@ -70,7 +80,7 @@ jobs:
           cdk destroy --all --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
-          #microSvcName: ${{ inputs. microSvcName }}
+          keepApiGateway: ${{ inputs.keepApiGateway }}
 
           
 
