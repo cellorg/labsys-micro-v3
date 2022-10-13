@@ -23,7 +23,7 @@ on:
         default: '1'
         required: true
 
-run-name: Deploy all to ${{ inputs.targetEnv }} by @${{ github.actor }}, maxAzs=${{ inputs.maxAzs }}, fargateSvcDesiredCount=${{ inputs.fargateSvcDesiredCount }}
+run-name: Deploy all to ${{ inputs.targetEnv }} by @${{ github.actor }}, maxAzs=${{ inputs.maxAzs }}, fargateSvcDesiredCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   deployAllMicroServices:
