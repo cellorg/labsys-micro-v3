@@ -27,6 +27,8 @@ on:
         default: '1'
         required: true
 
+run-name: Deploy to ${{ inputs.targetEnv }} by @${{ github.actor }} microSvcName=${{ inputs. microSvcName }} fargateSvcDesiredCount=${{ inputs.fargateSvcDesiredCount }}
+
 jobs:
   deployMicroSvc:
     name: manual deploy

@@ -15,14 +15,8 @@ on:
           - t3
           - u1
           - prod
-      #microSvcName:
-      #  type: choice
-      #  description: 'microSvcName'
-      #  default: 'microa'
-      #  required: true
-      #  options:
-      #    - microa
-      #    - animal
+
+run-name: Destroy all stacks in ${{ inputs.targetEnv }} by @${{ github.actor }}
 
 jobs:
   destroyAllStacks:
