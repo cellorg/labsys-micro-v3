@@ -77,7 +77,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk destroy labsys-sharedApiGateway-stack labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
+          cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
           keepApiGateway: ${{ inputs.keepApiGateway }}
