@@ -18,6 +18,8 @@ export class SharedApiGatewayStack extends cdk.Stack {
             exportName: exportedApiGatewayId,
             value: apiGateway.apiId,
         });
+
+        console.log(`endpoint: ${apiGateway.apiEndpoint}`);
     }
 
 }
