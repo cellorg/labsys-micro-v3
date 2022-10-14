@@ -6,6 +6,7 @@ import { SharedInfraStack } from '../lib/shared-infra-stack';
 import { SharedApiGatewayStack } from '../lib/shared-apigateway-stack';
 import { ServiceInfraStackProps } from '../lib/micro-svc-stacks';
 import { MicroSvcStack } from '../lib/micro-svc-stacks';
+import {SharedVpcStack} from "../lib/shared-vpc-stack";
 
 const accountRegionEnv = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -14,7 +15,11 @@ const accountRegionEnv = {
 
 const app = new cdk.App();
 
-new SharedApiGatewayStack(app, cdkUtil.sharedApiGatewayStackId,{
+new SharedVpcStack(app, cdkUtil.sharedInfraStackId, {
+    env: accountRegionEnv,
+});
+
+new SharedApiGatewayStack(app, cdkUtil.sharedApiGatewayStackId, {
     env: accountRegionEnv,
 });
 
@@ -24,7 +29,6 @@ const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
 
 const svcProps : ServiceInfraStackProps = {
     env: accountRegionEnv,
-    vpc: sharedInfraStack.vpc,
     vpcLink: sharedInfraStack.vpcLink,
     dnsNamespace: sharedInfraStack.dnsNamespace,
     securityGroup: sharedInfraStack.securityGroup

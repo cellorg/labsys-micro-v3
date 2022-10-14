@@ -5,7 +5,6 @@ import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import {PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 
 export class SharedInfraStack extends cdk.Stack {
-  public readonly vpc: aws_ec2.Vpc;
   public readonly vpcLink: apigatewayv2.VpcLink;
   public readonly dnsNamespace: PrivateDnsNamespace;
   public readonly securityGroup: aws_ec2.SecurityGroup;
@@ -13,14 +12,10 @@ export class SharedInfraStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    this.vpc = new aws_ec2.Vpc(this, cdkUtil.vpcId, {
-      vpcName: cdkUtil.vpcId,
-      maxAzs: cdkUtil.maxAzs,
-    });
-    cdkUtil.tagItem(this.vpc, cdkUtil.vpcId);
+    const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcId: cdkUtil.vpcId });
 
     this.vpcLink = new apigatewayv2.VpcLink(this, cdkUtil.vpcLinkId, {
-      vpc: this.vpc,
+      vpc: vpc,
       vpcLinkName: cdkUtil.vpcLinkId,
     });
     cdkUtil.tagItem(this.vpcLink, cdkUtil.vpcLinkId);
@@ -28,7 +23,7 @@ export class SharedInfraStack extends cdk.Stack {
     //@ts-ignore
     this.dnsNamespace = new aws_servicediscovery.PrivateDnsNamespace(this, cdkUtil.cloudMapDnsNamespaceId,{
       name: `${cdkUtil.applicationName}.local`,
-      vpc: this.vpc,
+      vpc: vpc,
       description: 'Private DnsNamespace for Microservices',
     });
     cdkUtil.tagItem(this.dnsNamespace, cdkUtil.cloudMapDnsNamespaceId);
@@ -36,7 +31,7 @@ export class SharedInfraStack extends cdk.Stack {
     //@ts-ignore
     this.securityGroup = new aws_ec2.SecurityGroup(this, cdkUtil.securityGroupId, {
       securityGroupName: cdkUtil.securityGroupId,
-      vpc: this.vpc,
+      vpc: vpc,
       allowAllOutbound: true,
       description: 'Allow traffic to Fargate HTTP API service.',
     });

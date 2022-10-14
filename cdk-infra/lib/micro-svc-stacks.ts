@@ -1,14 +1,12 @@
 import * as cdkUtil from './cdkUtil'
 import * as cdk from 'aws-cdk-lib';
 import {aws_ec2, aws_ecs, aws_logs, Duration} from "aws-cdk-lib";
-import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
 import * as apigatewayv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import {HttpMethod, HttpRoute, HttpRouteKey, HttpRouteProps} from "@aws-cdk/aws-apigatewayv2-alpha";
 
 export interface ServiceInfraStackProps extends cdk.StackProps {
-  vpc: Vpc,
   vpcLink: apigatewayv2.VpcLink,
   dnsNamespace: PrivateDnsNamespace,
   securityGroup: aws_ec2.SecurityGroup
@@ -19,7 +17,8 @@ export class MicroSvcStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props);
 
-    const vpc = props.vpc;
+    const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcId: cdkUtil.vpcId });
+
     const vpcLink = props.vpcLink;
     const dnsNamespace = props.dnsNamespace;
     const securityGroup = props.securityGroup;
