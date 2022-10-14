@@ -84,7 +84,7 @@ jobs:
           cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
-      - name: Destroy AWS resources - all stacks, but keep API Gateway stack
+      - name: Destroy AWS resources - all stacks
         if: ${{ ! inputs.keepApiGateway }}
         run:  |
           cd cdk-infra
