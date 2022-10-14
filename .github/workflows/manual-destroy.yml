@@ -83,7 +83,7 @@ jobs:
         env:
           targetEnv: ${{ inputs.targetEnv }}
       - name: Destroy AWS resources - all stacks, but keep API Gateway stack
-        if: !${{ inputs.keepApiGateway }}
+        if: ${{ ! inputs.keepApiGateway }}
         run: cdk destroy --all --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
