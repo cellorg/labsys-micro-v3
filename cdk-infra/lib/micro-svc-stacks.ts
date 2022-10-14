@@ -1,6 +1,6 @@
 import * as cdkUtil from './cdkUtil'
 import * as cdk from 'aws-cdk-lib';
-import { aws_ec2, aws_ecs, aws_logs } from "aws-cdk-lib";
+import {aws_ec2, aws_ecs, aws_logs, Duration} from "aws-cdk-lib";
 import {Vpc} from "aws-cdk-lib/aws-ec2";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
@@ -43,13 +43,13 @@ export class MicroSvcStack extends cdk.Stack {
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
     const containerId = microSvcNameResourcePrefix + '-container';
-    //const healthCheckCommand = `curl -f http://localhost:8080/${microSvcName}/health || exit 1`
     const svcLogGroup = new aws_logs.LogGroup(
         this,
         microSvcName + '-ServiceLogGroup',
         {
           logGroupName: '/ecs/' + microSvcName,
           removalPolicy: cdk.RemovalPolicy.DESTROY,
+          retention: cdkUtil.awsSvcLogRetentionDays,
         }
     );
     const svcLogDriver = new aws_ecs.AwsLogDriver({
@@ -66,12 +66,8 @@ export class MicroSvcStack extends cdk.Stack {
           },
           logging: svcLogDriver,
           portMappings: [{ containerPort: 8080 }],
-          // healthCheck: {
-          //   command: [ 'CMD-SHELL', healthCheckCommand ],
-          // },
         }
     );
-    //container.addPortMappings({ containerPort: 8080 });
     cdkUtil.tagItem(container, containerId);
 
     const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
@@ -92,6 +88,16 @@ export class MicroSvcStack extends cdk.Stack {
       },
     });
     cdkUtil.tagItem(fargateService, fargateServiceId);
+
+    const scaling = fargateService.autoScaleTaskCount({
+      maxCapacity: 6,
+      minCapacity: cdkUtil.fargateSvcDesiredCount
+    });
+    scaling.scaleOnCpuUtilization('CpuScaling', {
+      targetUtilizationPercent: 50,
+      scaleInCooldown: Duration.seconds(60),
+      scaleOutCooldown: Duration.seconds(60)
+    });
 
     // Open issues: https://github.com/aws/aws-cdk/issues/12337
     // const apiGatewayId = cdkUtil.applicationName + '-apiGateway';

@@ -1,4 +1,5 @@
 import * as cdk from 'aws-cdk-lib';
+import {RetentionDays} from "aws-cdk-lib/aws-logs";
 
 // input parameters
 const targetEnv = process.env.targetEnv || 'd1';
@@ -14,6 +15,7 @@ export const vpcId = applicationName + '-vpc';
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
 export const securityGroupId = applicationName + '-securityGroup';
+export let awsSvcLogRetentionDays = RetentionDays.ONE_DAY;
 
 // tag AWS resources according to https://cellsignal.atlassian.net/wiki/spaces/EA/pages/1399128192/AWS+Use+Standard
 const tagEnvironment = process.env.Environment || 'Dev';
@@ -32,6 +34,7 @@ switch (targetEnv) {
         PDP_OWNER_JDBC_URL = 'fake:jdbc:url:d1';
         break;
     case 'd2':
+        awsSvcLogRetentionDays = RetentionDays.THREE_DAYS;
         PDP_OWNER_JDBC_URL = 'fake:jdbc:url:d2';
         break;
     case 't3':

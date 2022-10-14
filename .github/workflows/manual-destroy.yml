@@ -15,26 +15,27 @@ on:
           - t3
           - u1
           - prod
-      #microSvcName:
-      #  type: choice
-      #  description: 'microSvcName'
-      #  default: 'microa'
-      #  required: true
-      #  options:
-      #    - microa
-      #    - animal
+      keepApiGateway:
+        description: 'keepApiGateway'
+        default: true
+        required: true
+        type: boolean
+
+run-name: Destroy stacks in ${{ inputs.targetEnv }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
     steps:
-      - name: Display input parameters
-        run: |
-          echo 'targetEnv: ${{ inputs.targetEnv }}'
-          echo 'microSvcName: ${{ inputs. microSvcName }}'
-          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
-          echo 'branch: ${{ github.head_ref || github.ref_name }}'
+#      - name: Set destroy command - destroy all stacks but keep the API Gateway stack
+#        if: ${{ inputs.keepApiGateway }}
+#        run: |
+#          echo destroyCommand=$(echo 'cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force') >> $GITHUB_ENV
+#      - name: Set destroy command - destroy all stacks
+#        if: !${{ inputs.keepApiGateway }}
+#        run: |
+#          echo destroyCommand=$(echo 'cdk destroy -all --force') >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}
@@ -69,17 +70,24 @@ jobs:
         with:
           node-version: "16"
       - name: Install AWS CDK
-        run: 'sudo npm install -g aws-cdk'
-      - name: Destroy AWS resources
+        run: sudo npm install -g aws-cdk
+      - name: CDK stack dependencies
         run: |
           cd cdk-infra
           npm install
           npm run build
           cdk bootstrap
-          cdk destroy --all --force
+      - name: Destroy AWS resources - all stacks, but keep API Gateway stack
+        if: ${{ inputs.keepApiGateway }}
+        run: cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
         env:
           targetEnv: ${{ inputs.targetEnv }}
-          #microSvcName: ${{ inputs. microSvcName }}
+      - name: Destroy AWS resources - all stacks, but keep API Gateway stack
+        if: ${{ ! inputs.keepApiGateway }}
+        run: cdk destroy --all --force
+        env:
+          targetEnv: ${{ inputs.targetEnv }}
+
 
           
 

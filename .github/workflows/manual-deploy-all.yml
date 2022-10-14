@@ -23,6 +23,8 @@ on:
         default: '1'
         required: true
 
+run-name: Deploy all to ${{ inputs.targetEnv }}, Azs=${{ inputs.maxAzs }}, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
+
 jobs:
   deployAllMicroServices:
     name: manual deploy
@@ -31,7 +33,7 @@ jobs:
       - name: Display input parameters
         run: |
           echo 'targetEnv: ${{ inputs.targetEnv }}'
-          echo 'microSvcName: ${{ inputs. microSvcName }}'
+          echo 'maxAzs: ${{ inputs.maxAzs }}'
           echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
           echo 'branch: ${{ github.head_ref || github.ref_name }}'
       - uses: actions/checkout@v3
