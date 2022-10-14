@@ -21,7 +21,7 @@ on:
 #        required: true
 #        type: boolean
 
-run-name: Destroy stacks in ${{ inputs.targetEnv }}
+run-name: Destroy stacks in ${{ inputs.targetEnv }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   destroyAllStacks:
