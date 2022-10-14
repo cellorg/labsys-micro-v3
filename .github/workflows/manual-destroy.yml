@@ -21,21 +21,13 @@ on:
         required: true
         type: boolean
 
-run-name: Destroy stacks in ${{ inputs.targetEnv }}, branch=${{ github.head_ref || github.ref_name }}
+run-name: Destroy stacks in ${{ inputs.targetEnv }}, keepApiGateway=${{ inputs.keepApiGateway }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
     steps:
-#      - name: Set destroy command - destroy all stacks but keep the API Gateway stack
-#        if: ${{ inputs.keepApiGateway }}
-#        run: |
-#          echo destroyCommand=$(echo 'cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force') >> $GITHUB_ENV
-#      - name: Set destroy command - destroy all stacks
-#        if: !${{ inputs.keepApiGateway }}
-#        run: |
-#          echo destroyCommand=$(echo 'cdk destroy -all --force') >> $GITHUB_ENV
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}
