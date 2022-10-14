@@ -15,7 +15,7 @@ const accountRegionEnv = {
 
 const app = new cdk.App();
 
-new SharedVpcStack(app, cdkUtil.sharedInfraStackId, {
+new SharedVpcStack(app, cdkUtil.sharedVpcStackId, {
     env: accountRegionEnv,
 });
 
