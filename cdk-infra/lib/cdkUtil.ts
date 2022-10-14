@@ -8,11 +8,13 @@ export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount 
 
 export const applicationName = 'labsys';
 export const sharedVpcStackId =  applicationName + '-sharedVpc-stack';
+export const vpcId = applicationName + '-vpc';
+export const exportedVpcId =  applicationName + '-vpcId-export';
 export const sharedApiGatewayStackId =  applicationName + '-sharedApiGateway-stack';
 export const apiGatewayId = applicationName + '-apiGateway';
 export const exportedApiGatewayId = applicationName + '-apiGatewayId-export';
 export const sharedInfraStackId = applicationName + '-sharedInfra-stack';
-export const vpcId = applicationName + '-vpc';
+
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
 export const securityGroupId = applicationName + '-securityGroup';
