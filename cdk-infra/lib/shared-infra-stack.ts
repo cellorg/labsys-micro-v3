@@ -12,7 +12,6 @@ export class SharedInfraStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    //const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcId: cdk.Fn.importValue(cdkUtil.exportedVpcId) });
     const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcName: cdkUtil.vpcId });
 
     this.vpcLink = new apigatewayv2.VpcLink(this, cdkUtil.vpcLinkId, {
