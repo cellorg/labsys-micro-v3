@@ -17,7 +17,8 @@ export class MicroSvcStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
     super(scope, id, props);
 
-    const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcId: cdk.Fn.importValue(cdkUtil.exportedVpcId) });
+    // const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcId: cdk.Fn.importValue(cdkUtil.exportedVpcId) });
+    const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcName: cdkUtil.vpcId });
 
     const vpcLink = props.vpcLink;
     const dnsNamespace = props.dnsNamespace;
