@@ -13,9 +13,9 @@ export class SharedVpcStack extends cdk.Stack {
         });
         cdkUtil.tagItem(vpc, cdkUtil.vpcId);
 
-        new cdk.CfnOutput(this, cdkUtil.exportedVpcId, {
-            exportName: cdkUtil.exportedVpcId,
-            value: vpc.vpcId,
-        });
+        // new cdk.CfnOutput(this, cdkUtil.exportedVpcId, {
+        //     exportName: cdkUtil.exportedVpcId,
+        //     value: vpc.vpcId,
+        // });
     }
 }
