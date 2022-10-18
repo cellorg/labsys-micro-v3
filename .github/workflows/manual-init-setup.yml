@@ -1,4 +1,4 @@
-name: Manual init setup of AWS OpenID Connect
+name: Manual init AWS Config OpenID Connect
 
 on:
   workflow_dispatch:
@@ -17,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
-        if: ${{ inputs.targetEnv == 'd1' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ inputs.awsAccessKey }}
