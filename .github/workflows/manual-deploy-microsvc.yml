@@ -27,7 +27,7 @@ on:
         default: '1'
         required: true
 
-run-name: Deploy microSvc ${{ inputs. microSvcName }} to ${{ inputs.targetEnv }}, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
+run-name: ${{ inputs.targetEnv }} - Deploy ${{ inputs. microSvcName }}, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   deployMicroSvc:
@@ -55,29 +55,25 @@ jobs:
         if: ${{ inputs.targetEnv == 'd1' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.WENDYADMIN_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.WENDYADMIN_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - d2
         if: ${{ inputs.targetEnv == 'd2' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.D2_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.D2_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::743047015654:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - t3
         if: ${{ inputs.targetEnv == 't3' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.T3_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.T3_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::750352965823:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - prod
         if: ${{ inputs.targetEnv == 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.PROD_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.PROD_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::244985974061:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.4.1
