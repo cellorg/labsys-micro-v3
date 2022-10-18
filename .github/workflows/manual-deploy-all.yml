@@ -94,7 +94,6 @@ jobs:
           cd cdk-infra
           npm install
           npm run build
-          cdk bootstrap
           cdk deploy labsys-sharedVpc-stack ---require-approval never
           cdk deploy --all ---require-approval never
         env:
