@@ -34,7 +34,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy ---require-approval never
+          cdk destroy --force
 
 
           
