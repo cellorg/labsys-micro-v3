@@ -29,9 +29,9 @@ jobs:
   deployAllMicroServices:
     name: manual deploy
     runs-on: ubuntu-latest
-  permissions:
-    id-token: write
-    contents: read
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Display input parameters
         run: |
