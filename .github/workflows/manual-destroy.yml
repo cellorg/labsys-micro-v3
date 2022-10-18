@@ -36,7 +36,7 @@ jobs:
         if: ${{ inputs.targetEnv == 'd1' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-destroy-role
+          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - d2
         if: ${{ inputs.targetEnv == 'd2' }}
@@ -67,7 +67,6 @@ jobs:
           cd cdk-infra
           npm install
           npm run build
-          cdk bootstrap
           cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
           cdk destroy labsys-sharedVpc-stack --force
       - name: Destroy AWS resources - API Gateway

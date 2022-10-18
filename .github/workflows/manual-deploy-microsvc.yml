@@ -89,7 +89,6 @@ jobs:
           cd cdk-infra
           npm install
           npm run build
-          cdk bootstrap
           cdk deploy labsys-${{ inputs. microSvcName }}-stack ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
