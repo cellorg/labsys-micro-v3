@@ -7,11 +7,13 @@ export const maxAzs = Number(process.env.maxAzs || '1');
 export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1');
 
 export const applicationName = 'labsys';
+export const sharedVpcStackId =  applicationName + '-sharedVpc-stack';
+export const vpcId = applicationName + '-vpc';
 export const sharedApiGatewayStackId =  applicationName + '-sharedApiGateway-stack';
 export const apiGatewayId = applicationName + '-apiGateway';
 export const exportedApiGatewayId = applicationName + '-apiGatewayId-export';
 export const sharedInfraStackId = applicationName + '-sharedInfra-stack';
-export const vpcId = applicationName + '-vpc';
+
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
 export const securityGroupId = applicationName + '-securityGroup';

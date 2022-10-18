@@ -53,28 +53,28 @@ jobs:
           mvn -B package --file pom.xml
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.WENDYADMIN_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.WENDYADMIN_SECRET_KEY }}
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - d2
         if: ${{ inputs.targetEnv == 'd2' }}
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.D2_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.D2_SECRET_KEY }}
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - t3
         if: ${{ inputs.targetEnv == 't3' }}
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.T3_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.T3_SECRET_KEY }}
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - prod
         if: ${{ inputs.targetEnv == 'prod' }}
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ secrets.PROD_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.PROD_SECRET_KEY }}
@@ -91,8 +91,7 @@ jobs:
           npm install
           npm run build
           cdk bootstrap
-          cdk deploy 'labsys-sharedApiGateway-stack' ---require-approval never
-          cdk deploy 'labsys-${{ inputs. microSvcName }}-stack' ---require-approval never
+          cdk deploy labsys-${{ inputs. microSvcName }}-stack ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}
           microSvcName: ${{ inputs.microSvcName }}

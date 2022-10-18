@@ -1,7 +1,6 @@
 import * as cdkUtil from './cdkUtil'
 import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as cdk from 'aws-cdk-lib';
-import {exportedApiGatewayId} from "./cdkUtil";
 
 export class SharedApiGatewayStack extends cdk.Stack {
 
@@ -15,7 +14,7 @@ export class SharedApiGatewayStack extends cdk.Stack {
         cdkUtil.tagItem(apiGateway, cdkUtil.apiGatewayId);
 
         new cdk.CfnOutput(this, cdkUtil.exportedApiGatewayId, {
-            exportName: exportedApiGatewayId,
+            exportName: cdkUtil.exportedApiGatewayId,
             value: apiGateway.apiId,
         });
 
