@@ -27,13 +27,16 @@ jobs:
   destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-destroy-role
+          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - d2
         if: ${{ inputs.targetEnv == 'd2' }}
