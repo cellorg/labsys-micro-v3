@@ -18,9 +18,4 @@ public class DemoController {
         logger.info("/hello invoked - logging");
         return "Hello from MicorA service! >>>>>> parameter dbUrl is " + dbUrl;
     }
-
-    @GetMapping("/health")
-    public String healthcheck() {
-        return "microa is healthy!";
-    }
 }
