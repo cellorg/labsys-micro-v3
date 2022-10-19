@@ -33,9 +33,6 @@ export class CdkInitOidcStack extends cdk.Stack {
 
     const role = new aws_iam.Role(this, 'gitHubCdkDeployRole', {
       assumedBy: webIdentityPrincipal,
-      // managedPolicies: [
-      //   aws_iam.ManagedPolicy.fromAwsManagedPolicyName('AdministratorAccess'),
-      // ],
       inlinePolicies: {
         policyDoc
       },

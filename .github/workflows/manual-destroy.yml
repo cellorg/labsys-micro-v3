@@ -74,8 +74,6 @@ jobs:
         run:  |
           cd cdk-infra
           cdk destroy labsys-sharedApiGateway-stack --force
-        env:
-          targetEnv: ${{ inputs.targetEnv }}
 
 
           
