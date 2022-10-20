@@ -4,7 +4,7 @@ import {RetentionDays} from "aws-cdk-lib/aws-logs";
 // input parameters
 const targetEnv = process.env.targetEnv || 'd1';
 export const maxAzs = Number(process.env.maxAzs || '1');
-export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1');
+export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '2');
 
 export const applicationName = 'labsys';
 export const sharedVpcStackId =  applicationName + '-sharedVpc-stack';

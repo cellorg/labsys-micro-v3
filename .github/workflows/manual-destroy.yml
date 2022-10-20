@@ -64,15 +64,29 @@ jobs:
         run: sudo npm install -g aws-cdk
       - name: Destroy AWS resources - microServices, infra and vpc
         run: |
-          cd cdk-infra
+          cd cdk-infra/github-deploy-infra/common
           npm install
           npm run build
-          cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
+          
+          cd ../micro-svc-infra
+          npm install
+          npm run build
+          cdk destroy --all --force
+          
+          cd ../shared-vpc-infra
+          npm install
+          npm run build
           cdk destroy labsys-sharedVpc-stack --force
       - name: Destroy AWS resources - API Gateway
         if: ${{ ! inputs.keepApiGateway }}
         run:  |
-          cd cdk-infra
+          cd cdk-infra/github-deploy-infra/common
+          npm install
+          npm run build
+          
+          cd ../shared-api-gw-infra
+          npm install
+          npm run build
           cdk destroy labsys-sharedApiGateway-stack --force
 
 

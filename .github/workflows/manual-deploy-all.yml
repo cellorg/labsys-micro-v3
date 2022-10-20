@@ -78,12 +78,23 @@ jobs:
         run: 'sudo npm install -g aws-cdk'
       - name: Deploy to AWS
         run: |
-          echo 'targetEnv: ${{ inputs.targetEnv }}'
-          echo 'fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}'
-          cd cdk-infra
+          cd cdk-infra/github-deploy-infra/common
+          npm install
+          npm run build
+          
+          cd ../shared-vpc-infra
           npm install
           npm run build
           cdk deploy labsys-sharedVpc-stack ---require-approval never
+          
+          cd ../shared-api-gw-infra
+          npm install
+          npm run build
+          cdk deploy labsys-sharedApiGateway-stack ---require-approval never
+          
+          cd ../micro-svc-infra
+          npm install
+          npm run build
           cdk deploy --all ---require-approval never
         env:
           targetEnv: ${{ inputs.targetEnv }}

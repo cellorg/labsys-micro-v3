@@ -1,4 +1,4 @@
-import * as cdkUtil from './cdkUtil'
+import * as cdkUtil from '../../common/cdkUtil'
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 } from 'aws-cdk-lib';
 

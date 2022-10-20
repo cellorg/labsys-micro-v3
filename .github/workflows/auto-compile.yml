@@ -21,7 +21,7 @@ on:
       - 'microservices/animal/**'
 
 jobs:
-  build:
+  compile:
 
     runs-on: ubuntu-latest
 
