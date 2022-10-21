@@ -42,27 +42,30 @@ export class MicroSvcStack extends cdk.Stack {
     });
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
-    // Note: keep the logGroupName unique, so that we can keep the log after destroy
-    // otherwise, re-deploy will fail with "already exist" error
-    const logGroupName = '/ecs/' + microSvcName + (new Date()).toISOString().split(':').join('-').replace('.', '-')
+    // Note: keep the logGroupName unique
+    // If we want to keep the log after destroy, then it needs to be unique.
+    // Otherwise, re-deploy will fail with "already exist" error
+    const logGroupName = '/ecs/' + microSvcName + "/" + cdkUtil.timeStampStr();
     const svcLogGroup = new aws_logs.LogGroup(
         this,
         microSvcName + '-ServiceLogGroup',
         {
           logGroupName: logGroupName,
           retention: cdkUtil.awsSvcLogRetentionDays as RetentionDays,
-          // removalPolicy: cdk.RemovalPolicy.DESTROY,
+          removalPolicy: cdk.RemovalPolicy.DESTROY,
         }
     );
     const svcLogDriver = new aws_ecs.AwsLogDriver({
       logGroup: svcLogGroup,
-      streamPrefix: microSvcName + 'Service',
+      streamPrefix: microSvcName,
     });
     const containerId = microSvcNameResourcePrefix + '-container';
     const container = taskDefinition.addContainer(
         containerId,
         {
           containerName: containerId,
+          // In the future, we may be able to set the specific ECR repo for the images once the cdk open issue is completed.
+          // cdk open issue: https://github.com/aws/aws-cdk/issues/12597
           image: aws_ecs.ContainerImage.fromAsset('../../../microservices/' + microSvcName),
           environment: {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
