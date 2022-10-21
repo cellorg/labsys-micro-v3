@@ -54,11 +54,13 @@ jobs:
         run: |
           cd cdk-infra/admin-init-infra
           githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
-          echo 'githubOidcRoleArn=${githubOidcRoleArn}' >> $GITHUB_ENV
+          echo 'githubOidcRoleArn=${githubOidcRoleArn}'
+          echo 'githubOidcRoleArn=${{ githubOidcRoleArn }}'
+          echo 'githubOidcRoleArn=${{ githubOidcRoleArn }}' >> $GITHUB_ENV
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: ${githubOidcRoleArn}
+          role-to-assume: ${{ githubOidcRoleArn }}
           aws-region: 'us-east-1'
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
