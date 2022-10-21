@@ -53,10 +53,9 @@ jobs:
       - name: set roleToAssume based on targetEnv
         run: |
           cd cdk-infra/admin-init-infra
-          export githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
-          echo 'githubOidcRoleArn=${githubOidcRoleArn}'
-          echo 'githubOidcRoleArn=${githubOidcRoleArn}'
-          echo 'githubOidcRoleArn=${githubOidcRoleArn}' >> $GITHUB_ENV
+          githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
+          echo ${githubOidcRoleArn}
+          echo githubOidcRoleArn=${githubOidcRoleArn} >> $GITHUB_ENV
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
