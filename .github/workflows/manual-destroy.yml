@@ -21,41 +21,40 @@ on:
         required: true
         type: boolean
 
-run-name: Destroy stacks in ${{ inputs.targetEnv }}, keepApiGateway=${{ inputs.keepApiGateway }}, branch=${{ github.head_ref || github.ref_name }}
+run-name: ${{ inputs.targetEnv }} - Destroy stacks, keepApiGateway=${{ inputs.keepApiGateway }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   destroyAllStacks:
     name: manual destroy
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v3
       - name: Configure AWS Credentials - d1
         if: ${{ inputs.targetEnv == 'd1' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.WENDYADMIN_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.WENDYADMIN_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::793330794008:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - d2
         if: ${{ inputs.targetEnv == 'd2' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.D2_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.D2_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::743047015654:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - t3
         if: ${{ inputs.targetEnv == 't3' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.T3_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.T3_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::750352965823:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - prod
         if: ${{ inputs.targetEnv == 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-access-key-id: ${{ secrets.PROD_ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.PROD_SECRET_KEY }}
+          role-to-assume: arn:aws:iam::244985974061:role/github-cdk-deploy-role
           aws-region: 'us-east-1'
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.4.1
@@ -68,7 +67,6 @@ jobs:
           cd cdk-infra
           npm install
           npm run build
-          cdk bootstrap
           cdk destroy labsys-sharedInfra-stack labsys-animal-stack labsys-microa-stack --force
           cdk destroy labsys-sharedVpc-stack --force
       - name: Destroy AWS resources - API Gateway
@@ -76,8 +74,6 @@ jobs:
         run:  |
           cd cdk-infra
           cdk destroy labsys-sharedApiGateway-stack --force
-        env:
-          targetEnv: ${{ inputs.targetEnv }}
 
 
           

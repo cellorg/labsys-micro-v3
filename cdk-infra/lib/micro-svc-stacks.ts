@@ -46,8 +46,10 @@ export class MicroSvcStack extends cdk.Stack {
         this,
         microSvcName + '-ServiceLogGroup',
         {
-          logGroupName: '/ecs/' + microSvcName,
-          removalPolicy: cdk.RemovalPolicy.DESTROY,
+          // Note: keep the logGroupName unique, so that we can keep the log after destroy
+          // otherwise, re-deploy will fail with "already exist" error
+          logGroupName: '/ecs/' + microSvcName + (new Date()).toISOString().replaceAll(':', '-').replace('.', '-'),
+          // removalPolicy: cdk.RemovalPolicy.DESTROY,
           retention: cdkUtil.awsSvcLogRetentionDays,
         }
     );
