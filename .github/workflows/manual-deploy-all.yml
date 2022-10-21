@@ -52,10 +52,7 @@ jobs:
           node-version: "16"
       - name: set roleToAssume based on targetEnv
         run: |
-          cd cdk-infra/github-deploy-infra/common
-          npm install
-          npm run build
-          ls -l
+          cd cdk-infra/admin-init-infra
           githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
           echo 'githubOidcRoleArn=${githubOidcRoleArn}' >> $GITHUB_ENV
       - name: Configure AWS Credentials
