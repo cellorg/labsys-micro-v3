@@ -1,4 +1,4 @@
-import * as cdkUtil from './cdkUtil'
+import * as cdkUtil from '../../common/cdkUtil'
 import * as cdk from 'aws-cdk-lib';
 import {aws_ec2, aws_servicediscovery} from 'aws-cdk-lib';
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';

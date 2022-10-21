@@ -1,10 +1,11 @@
-import * as cdkUtil from './cdkUtil'
+import * as cdkUtil from '../../common/cdkUtil'
 import * as cdk from 'aws-cdk-lib';
 import {aws_ec2, aws_ecs, aws_logs, Duration} from "aws-cdk-lib";
 import {DnsRecordType, PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 import * as apigatewayv2_integrations from "@aws-cdk/aws-apigatewayv2-integrations-alpha";
 import * as apigatewayv2 from "@aws-cdk/aws-apigatewayv2-alpha";
 import {HttpMethod, HttpRoute, HttpRouteKey, HttpRouteProps} from "@aws-cdk/aws-apigatewayv2-alpha";
+import {RetentionDays} from "aws-cdk-lib/aws-logs";
 
 export interface ServiceInfraStackProps extends cdk.StackProps {
   vpcLink: apigatewayv2.VpcLink,
@@ -41,27 +42,28 @@ export class MicroSvcStack extends cdk.Stack {
     });
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
-    const containerId = microSvcNameResourcePrefix + '-container';
+    // Note: keep the logGroupName unique, so that we can keep the log after destroy
+    // otherwise, re-deploy will fail with "already exist" error
+    const logGroupName = '/ecs/' + microSvcName + (new Date()).toISOString().split(':').join('-').replace('.', '-')
     const svcLogGroup = new aws_logs.LogGroup(
         this,
         microSvcName + '-ServiceLogGroup',
         {
-          // Note: keep the logGroupName unique, so that we can keep the log after destroy
-          // otherwise, re-deploy will fail with "already exist" error
-          logGroupName: '/ecs/' + microSvcName + (new Date()).toISOString().replaceAll(':', '-').replace('.', '-'),
+          logGroupName: logGroupName,
+          retention: cdkUtil.awsSvcLogRetentionDays as RetentionDays,
           // removalPolicy: cdk.RemovalPolicy.DESTROY,
-          retention: cdkUtil.awsSvcLogRetentionDays,
         }
     );
     const svcLogDriver = new aws_ecs.AwsLogDriver({
       logGroup: svcLogGroup,
       streamPrefix: microSvcName + 'Service',
     });
+    const containerId = microSvcNameResourcePrefix + '-container';
     const container = taskDefinition.addContainer(
         containerId,
         {
           containerName: containerId,
-          image: aws_ecs.ContainerImage.fromAsset('../microservices/' + microSvcName),
+          image: aws_ecs.ContainerImage.fromAsset('../../../microservices/' + microSvcName),
           environment: {
             PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
           },

@@ -1,4 +1,4 @@
-import * as cdkUtil from './cdkUtil'
+import * as cdkUtil from '../../common/cdkUtil'
 import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha';
 import * as cdk from 'aws-cdk-lib';
 
