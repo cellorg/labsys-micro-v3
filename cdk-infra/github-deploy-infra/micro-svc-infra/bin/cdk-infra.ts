@@ -27,6 +27,7 @@ const svcProps : ServiceInfraStackProps = {
     vpcLink: sharedInfraStack.vpcLink,
     dnsNamespace: sharedInfraStack.dnsNamespace,
     securityGroup: sharedInfraStack.securityGroup,
+    ecsTaskRole: sharedInfraStack.ecsTaskRole,
     sharedSecrets: sharedSecretsStack.labsysScrets,
 }
 

@@ -1,6 +1,6 @@
 import * as cdkUtil from '../../common/cdkUtil'
 import * as cdk from 'aws-cdk-lib';
-import {aws_ec2, aws_servicediscovery} from 'aws-cdk-lib';
+import {aws_ec2, aws_iam, aws_servicediscovery} from 'aws-cdk-lib';
 import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
 import {PrivateDnsNamespace} from "aws-cdk-lib/aws-servicediscovery";
 
@@ -8,6 +8,7 @@ export class SharedInfraStack extends cdk.Stack {
   public readonly vpcLink: apigatewayv2.VpcLink;
   public readonly dnsNamespace: PrivateDnsNamespace;
   public readonly securityGroup: aws_ec2.SecurityGroup;
+  public readonly ecsTaskRole: aws_iam.Role;
 
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -38,5 +39,14 @@ export class SharedInfraStack extends cdk.Stack {
     this.securityGroup.connections.allowFromAnyIpv4(aws_ec2.Port.tcp(8080));
     cdkUtil.tagItem(this.securityGroup, cdkUtil.securityGroupId);
 
+    this.ecsTaskRole = new aws_iam.Role(this, 'labsys-BackendECSTaskRole', {
+      roleName: 'labsys-BackendECSTaskRole',
+      assumedBy: new aws_iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
+      managedPolicies: [
+        aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
+            'service-role/AmazonECSTaskExecutionRolePolicy'
+        ),
+      ],
+    });
   }
 }

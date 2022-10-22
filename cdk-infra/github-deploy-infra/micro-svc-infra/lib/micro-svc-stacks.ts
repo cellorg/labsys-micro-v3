@@ -12,6 +12,7 @@ export interface ServiceInfraStackProps extends cdk.StackProps {
   vpcLink: apigatewayv2.VpcLink,
   dnsNamespace: PrivateDnsNamespace,
   securityGroup: aws_ec2.SecurityGroup,
+  ecsTaskRole: aws_iam.Role,
   sharedSecrets: LabsysSecrets
 }
 
@@ -25,6 +26,7 @@ export class MicroSvcStack extends cdk.Stack {
     const vpcLink = props.vpcLink;
     const dnsNamespace = props.dnsNamespace;
     const securityGroup = props.securityGroup;
+    const ecsTaskRole = props.ecsTaskRole;
     const sharedSecrets = props.sharedSecrets;
 
     const microSvcNameResourcePrefix = cdkUtil.applicationName + '-' + microSvcName;
@@ -33,16 +35,7 @@ export class MicroSvcStack extends cdk.Stack {
     }) as apigatewayv2.HttpApi;
 
     const secretPdpOwner = props.sharedSecrets.PDP_OWNER_PASSWORD;
-    const taskRole = new aws_iam.Role(this, 'labsys-BackendECSTaskRole', {
-      roleName: 'labsys-BackendECSTaskRole',
-      assumedBy: new aws_iam.ServicePrincipal('ecs-tasks.amazonaws.com'),
-      managedPolicies: [
-        aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
-            'service-role/AmazonECSTaskExecutionRolePolicy'
-        ),
-      ],
-    });
-    secretPdpOwner.grantRead(taskRole);
+    secretPdpOwner.grantRead(ecsTaskRole);
 
     const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
@@ -51,11 +44,12 @@ export class MicroSvcStack extends cdk.Stack {
     });
     cdkUtil.tagItem(cluster, clusterId);
 
-    const taskDefinitionId = microSvcNameResourcePrefix + '-taskDefinition'
+    const taskDefinitionId = microSvcNameResourcePrefix + '-taskDefinition';
+    //@ts-ignore
     const taskDefinition = new aws_ecs.FargateTaskDefinition(this, taskDefinitionId, {
       cpu: 256,
       memoryLimitMiB: 512,
-      taskRole: taskRole,
+      taskRole: ecsTaskRole,
     });
     cdkUtil.tagItem(taskDefinition, taskDefinitionId);
 
