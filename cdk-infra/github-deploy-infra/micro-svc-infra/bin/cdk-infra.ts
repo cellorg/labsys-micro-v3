@@ -5,6 +5,7 @@ import * as cdkUtil from '../../common/cdkUtil';
 import { SharedInfraStack } from '../lib/shared-infra-stack';
 import { ServiceInfraStackProps } from '../lib/micro-svc-stacks';
 import { MicroSvcStack } from '../lib/micro-svc-stacks';
+import {SharedSecretsStack} from "../lib/shared-secrets-stack";
 
 const accountRegionEnv = {
     account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -12,6 +13,10 @@ const accountRegionEnv = {
 };
 
 const app = new cdk.App();
+
+const sharedSecretsStack = new SharedSecretsStack(app, cdkUtil.sharedSecretsStackId, {
+    env: accountRegionEnv
+});
 
 const sharedInfraStack = new SharedInfraStack(app, cdkUtil.sharedInfraStackId, {
     env: accountRegionEnv
@@ -21,7 +26,8 @@ const svcProps : ServiceInfraStackProps = {
     env: accountRegionEnv,
     vpcLink: sharedInfraStack.vpcLink,
     dnsNamespace: sharedInfraStack.dnsNamespace,
-    securityGroup: sharedInfraStack.securityGroup
+    securityGroup: sharedInfraStack.securityGroup,
+    sharedSecrets: sharedSecretsStack.labsysScrets,
 }
 
 new MicroSvcStack(

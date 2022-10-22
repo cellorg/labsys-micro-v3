@@ -12,10 +12,18 @@ public class DemoController {
     @Value("${pdp.owner.jdbc.url}")
     private String dbUrl;
 
+    @Value("${pdp.owner.username}")
+    private String pdpOwnerUsername;
+
+    @Value("${pdp.owner.password}")
+    private String pdpOwnerPassword;
+
     @GetMapping("/hello")
     public String helloWorld() {
         System.out.println("/hello invoked - System.out.println");
         logger.info("/hello invoked - logging");
-        return "Hello from MicorA service! >>>>>> parameter dbUrl is " + dbUrl;
+        return "Hello from MicorA service! >>>>>>\n parameter dbUrl=" + dbUrl
+                + "\npdpOwnerUsername=" + pdpOwnerUsername
+                + "\npdpOwnerPassword=" + pdpOwnerPassword;
     }
 }
