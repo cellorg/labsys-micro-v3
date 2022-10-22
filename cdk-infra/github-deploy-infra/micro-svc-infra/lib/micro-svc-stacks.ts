@@ -34,8 +34,8 @@ export class MicroSvcStack extends cdk.Stack {
       httpApiId: cdk.Fn.importValue(cdkUtil.exportedApiGatewayId)
     }) as apigatewayv2.HttpApi;
 
-    const secretPdpOwner = props.sharedSecrets.PDP_OWNER_PASSWORD;
-    secretPdpOwner.grantRead(ecsTaskRole);
+    const pdpOwnerPassword = props.sharedSecrets.PDP_OWNER_PASSWORD;
+    pdpOwnerPassword.grantRead(ecsTaskRole);
 
     const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
     const cluster = new aws_ecs.Cluster(this, clusterId, {
