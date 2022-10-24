@@ -13,6 +13,7 @@ export const sharedApiGatewayStackId =  applicationName + '-sharedApiGateway-sta
 export const apiGatewayId = applicationName + '-apiGateway';
 export const exportedApiGatewayId = applicationName + '-apiGatewayId-export';
 export const sharedInfraStackId = applicationName + '-sharedInfra-stack';
+export const sharedSecretsStackId = applicationName + '-sharedSecrets-stack';
 
 export const vpcLinkId = applicationName + '-vpclink';
 export const cloudMapDnsNamespaceId = applicationName + '-dnsNamespace';
@@ -20,6 +21,7 @@ export const securityGroupId = applicationName + '-securityGroup';
 export let awsSvcLogRetentionDays = RetentionDays.ONE_DAY;
 let tagEnvironment = process.env.Environment || 'nonprod';
 
+export const PDP_OWNER_USERNAME = 'PDP_OWNER';
 export let PDP_OWNER_JDBC_URL = '';
 switch (targetEnv) {
     case 'd1':
