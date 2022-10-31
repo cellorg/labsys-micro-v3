@@ -18,12 +18,8 @@ on:
         description: 'fargateSvcDesiredCount'
         default: '1'
         required: true
-      maxAzs:
-        description: 'maxAzs'
-        default: '1'
-        required: true
 
-run-name: ${{ inputs.targetEnv }} - Deploy all, Azs=${{ inputs.maxAzs }}, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
+run-name: ${{ inputs.targetEnv }} - Deploy all, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   deployAllMicroServices:
@@ -61,10 +57,17 @@ jobs:
           cd cdk-infra/admin-init-infra
           githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
           echo githubOidcRoleArn=${githubOidcRoleArn} >> $GITHUB_ENV
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials - nonprod
+        if: ${{ targetEnv != 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: ${{ env.githubOidcRoleArn }}
+          role-to-assume: ${{ arn:aws:iam::secrets.NON_PROD_AWS_ACCOUNT:role/github-cdk-deploy-role }}
+          aws-region: 'us-east-1'
+      - name: Configure AWS Credentials - prod
+        if: ${{ targetEnv == 'prod' }}
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          role-to-assume: ${{ arn:aws:iam::secrets.PROD_AWS_ACCOUNT:role/github-cdk-deploy-role }}
           aws-region: 'us-east-1'
       - name: Install AWS CDK
         run: 'sudo npm install -g aws-cdk'
@@ -73,12 +76,7 @@ jobs:
           cd cdk-infra/github-deploy-infra/common
           npm install
           npm run build
-          
-          cd ../shared-vpc-infra
-          npm install
-          npm run build
-          cdk deploy labsys-sharedVpc-stack ---require-approval never
-          
+                  
           cd ../shared-api-gw-infra
           npm install
           npm run build
@@ -91,7 +89,6 @@ jobs:
         env:
           targetEnv: ${{ inputs.targetEnv }}
           fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
-          maxAzs: ${{ inputs.maxAzs }}
 
           
 
