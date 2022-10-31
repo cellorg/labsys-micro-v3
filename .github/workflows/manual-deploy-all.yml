@@ -52,11 +52,6 @@ jobs:
         uses: actions/setup-node@v3.4.1
         with:
           node-version: "16"
-      - name: get role ARN of role-to-assume based on targetEnv
-        run: |
-          cd cdk-infra/admin-init-infra
-          githubOidcRoleArn=$(node getGithubOidcRoleArn.js ${{ inputs.targetEnv }})
-          echo githubOidcRoleArn=${githubOidcRoleArn} >> $GITHUB_ENV
       - name: Configure AWS Credentials - nonprod
         if: ${{ inputs.targetEnv != 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
