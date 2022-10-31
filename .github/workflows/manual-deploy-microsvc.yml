@@ -58,13 +58,13 @@ jobs:
         with:
           node-version: "16"
       - name: Configure AWS Credentials - nonprod
-        if: ${{ targetEnv != 'prod' }}
+        if: ${{ inputs.targetEnv != 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: ${{ arn:aws:iam::secrets.NON_PROD_AWS_ACCOUNT:role/github-cdk-deploy-role }}
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - prod
-        if: ${{ targetEnv == 'prod' }}
+        if: ${{ inputs.targetEnv == 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           role-to-assume: ${{ arn:aws:iam::secrets.PROD_AWS_ACCOUNT:role/github-cdk-deploy-role }}
