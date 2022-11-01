@@ -2,7 +2,7 @@ import * as cdk from 'aws-cdk-lib';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 
 // input parameters
-const targetEnv = process.env.targetEnv || 'd2';
+const targetEnv = process.env.targetEnv || 'd1';
 export const fargateSvcDesiredCount = Number(process.env.fargateSvcDesiredCount || '1');
 
 // It is preferred that we deploy all non-prod environments, such as d1, d2, t3, etc., in the same AWS account.
