@@ -36,11 +36,6 @@ jobs:
         run: |
           echo Only user 'wdaicellorg' can deploy to prod, and only the release branch can be deployed to prod.
           exit 1
-      - uses: actions/checkout@v3
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.4.1
-        with:
-          node-version: "16"
       - name: Configure AWS Credentials - nonprod
         if: ${{ inputs.targetEnv != 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
@@ -53,6 +48,11 @@ jobs:
         with:
           role-to-assume: ${{ format('arn:aws:iam::{0}:role/github-cdk-deploy-role', secrets.PROD_AWS_ACCOUNT) }}
           aws-region: 'us-east-1'
+      - uses: actions/checkout@v3
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.4.1
+        with:
+          node-version: "16"
       - name: Install AWS CDK
         run: sudo npm install -g aws-cdk
       - name: Destroy AWS resources - microServices, infra and vpc
@@ -76,7 +76,7 @@ jobs:
           cd ../shared-api-gw-infra
           npm install
           npm run build
-          cdk destroy labsys-sharedApiGateway-stack --force
+          cdk destroy --force
 
 
           

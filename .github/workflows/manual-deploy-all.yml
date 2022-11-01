@@ -39,7 +39,7 @@ jobs:
         if: ${{ inputs.targetEnv != 'prod' }}
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          role-to-assume: 'arn:aws:iam::793330794008:role/github-cdk-deploy-role'
+          role-to-assume: ${{ format('arn:aws:iam::{0}:role/github-cdk-deploy-role', secrets.NON_PROD_AWS_ACCOUNT) }}
           aws-region: 'us-east-1'
       - name: Configure AWS Credentials - prod
         if: ${{ inputs.targetEnv == 'prod' }}
@@ -75,7 +75,7 @@ jobs:
           cd ../shared-api-gw-infra
           npm install
           npm run build
-          cdk deploy labsys-sharedApiGateway-stack ---require-approval never
+          cdk deploy ---require-approval never
           
           cd ../micro-svc-infra
           npm install
