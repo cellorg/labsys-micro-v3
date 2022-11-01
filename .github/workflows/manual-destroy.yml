@@ -65,7 +65,8 @@ jobs:
           npm install
           npm run build
           cdk destroy --all --force
-          
+        env:
+          targetEnv: ${{ inputs.targetEnv }}
       - name: Destroy AWS resources - API Gateway
         if: ${{ ! inputs.keepApiGateway }}
         run:  |
@@ -77,7 +78,8 @@ jobs:
           npm install
           npm run build
           cdk destroy --force
-
+        env:
+          targetEnv: ${{ inputs.targetEnv }}
 
           
 
