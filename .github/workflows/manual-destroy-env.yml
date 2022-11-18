@@ -71,7 +71,7 @@ jobs:
       - name: Destroy AWS resources - API Gateway
         if: ${{ !inputs.keepApiGateway }}
         run:  |
-          cdk destroy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack
+          cdk destroy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack --force
 
 
           
