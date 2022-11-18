@@ -73,10 +73,6 @@ jobs:
         run:  |
           cdk destroy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack
 
-      - name: Keep API Gateway - redeploy it to clean the references, e.g. vpcLink association with api stage
-        if: ${{ inputs.keepApiGateway }}
-        run:  |
-          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
 
           
 
