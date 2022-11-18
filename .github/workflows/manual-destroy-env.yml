@@ -66,7 +66,7 @@ jobs:
           npm run build
 
           echo "Destroying all microservices ..."
-          cdk destroy "labsys-env-${{ inputs.targetEnv }}-*" --force
+          cdk destroy "labsys-env-${{ inputs.targetEnv }}-svc-*" --force
 
       - name: Destroy AWS resources - API Gateway
         if: ${{ !inputs.keepApiGateway }}
