@@ -30,6 +30,6 @@ public class DemoController {
 
     @GetMapping("/health")
     public String heath() {
-        return "Healthy! \n";
+        return "Microa is Healthy! \n";
     }
 }

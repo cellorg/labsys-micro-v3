@@ -47,7 +47,7 @@ export class EnvApigatewayStack extends cdk.Stack {
 
         const exportedApiUrl = appEnvPrefix + '-apiUrl-export';
         new cdk.CfnOutput(this, exportedApiUrl, {
-            value: 'https://' + apiGateway.restApiId + '-' + vpcEndpoint.vpcEndpointId + '.execute-api.' +  this.region + '.amazonaws.com/',
+            value: `https://${apiGateway.restApiId}-${vpcEndpoint.vpcEndpointId}.execute-api.${this.region}.amazonaws.com/${targetEnv}`,
             exportName: exportedApiUrl,
             description: 'This is the api url that needs to be invoked from an ec2 instance or corporate vpn',
         });
