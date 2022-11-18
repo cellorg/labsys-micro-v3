@@ -28,7 +28,7 @@ env:
 
 jobs:
   destroyAllStacks:
-    name: manual destroy
+    name: Manual destroy one environment
     runs-on: ubuntu-latest
     permissions:
       id-token: write

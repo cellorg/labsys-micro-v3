@@ -27,7 +27,7 @@ env:
 
 jobs:
   deployAllMicroServicesWithinEnv:
-    name: manual deploy
+    name: Manual deploy all in one environment
     runs-on: ubuntu-latest
     permissions:
       id-token: write

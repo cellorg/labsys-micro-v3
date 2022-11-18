@@ -7,7 +7,7 @@ run-name: all - Destroy all environments' stacks, branch=${{ github.head_ref || 
 
 jobs:
   destroyAllStacks:
-    name: manual destroy
+    name: Manual destroy all environments
     runs-on: ubuntu-latest
     permissions:
       id-token: write

@@ -36,7 +36,7 @@ env:
 
 jobs:
   deployMicroSvc:
-    name: manual deploy
+    name: Manual deploy one Micro service
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -89,7 +89,7 @@ jobs:
           cdk deploy labsys-env-${{ inputs.targetEnv }}-svc-${{ inputs.microSvcName }}-stack ---require-approval never
 
           echo "Deploying the api-microservice-integration stack ..."
-          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiIntegration-${{ inputs.microSvcName }}-stack ---require-approval never
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-svc-apiIntegration-${{ inputs.microSvcName }}-stack ---require-approval never
 
           echo "Redeploying Api Gateway, so the api-microservice-integration configuration can take effect ..."
           cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
