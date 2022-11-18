@@ -1,4 +1,4 @@
-name: Manual deploy all in an environment
+name: Manual deploy all in one environment
 
 on:
   workflow_dispatch:
@@ -76,9 +76,7 @@ jobs:
           cd cdk-infra/github-deploy-infra/micro-svc-infra
           npm install
           npm run build
-          
-          cdk bootstrap
-          
+                  
           echo "Deploying Api Gateway for this environment ..."
           cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
           
