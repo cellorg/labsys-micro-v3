@@ -7,9 +7,11 @@ export class CdkInitOidcStack extends cdk.Stack {
 
     // The provider URL and Audience are fixed
     // https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services
+    // workaround: need to hardcode the thumprints for now https://github.com/aws/aws-cdk/issues/8607
     const githubProvider = new aws_iam.OpenIdConnectProvider(this, 'githubProvider', {
       url: 'https://token.actions.githubusercontent.com',
       clientIds: ['sts.amazonaws.com'],
+      thumbprints:['6938FD4D98BAB03FAADB97B34396831E3780AEA1'],
     });
 
     const webIdentityPrincipal = new aws_iam.WebIdentityPrincipal(

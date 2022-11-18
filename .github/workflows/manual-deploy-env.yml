@@ -77,14 +77,16 @@ jobs:
           npm install
           npm run build
           
+          cdk bootstrap
+          
           echo "Deploying Api Gateway for this environment ..."
-          cdk cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
           
           echo "Deploying all microservices within the environment ..."
           cdk deploy "labsys-env-${{ inputs.targetEnv }}-*" ---require-approval never
           
           echo "Redeploying Api Gateway, so the api-microservice-integration configuration can take effect ..."
-          cdk cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
 
 
 

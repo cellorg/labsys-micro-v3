@@ -1,4 +1,4 @@
-name: Manual destroy microservices
+name: Manual destroy one environment
 
 on:
   workflow_dispatch:
@@ -59,39 +59,27 @@ jobs:
       - name: Install AWS CDK
         run: sudo npm install -g aws-cdk
 
-      - name: Redeploy microservices' apiIntegrations with MOCK integration (i.e. remove reference of vpclink from API Gateway)
-        run: |
-          cd cdk-infra/github-deploy-infra/common
-          npm install
-          npm run build
-          
-          cd ../micro-svc-infra
-          npm install
-          npm run build
-          cdk deploy labsys-${{ inputs.targetEnv }}-animal-apiIntegration-stack ---require-approval never
-          cdk deploy labsys-${{ inputs.targetEnv }}-microa-apiIntegration-stack ---require-approval never
-          
-          echo "Redeploy API Gateway, so the new MOCK integrations take effect."
-          cd ../shared-api-gw-infra
-          npm install
-          npm run build
-          cdk deploy labsys-${{ inputs.targetEnv }}-sharedApiGateway-stack ---require-approval never
-        env:
-          isMockApiGwIntegration: true
-
-      - name: Destroy AWS resources - destroying sharedInfra (network load balancer and vpclink, etc.) stack will also destroy the dependant microservices.
+      - name: Destroying all microservices in one environment ...
         run: |      
           cd cdk-infra/github-deploy-infra/micro-svc-infra
-          cdk destroy labsys-${{ inputs.targetEnv }}-sharedInfra-stack --force
-          cdk destroy labsys-${{ inputs.targetEnv }}-animal-apiIntegration-stack --force
-          cdk destroy labsys-${{ inputs.targetEnv }}-microa-apiIntegration-stack --force
-          cdk destroy labsys-${{ inputs.targetEnv }}-sharedSecrets-stack --force
+          npm install
+          npm run build
+
+          echo "Destroying all microservices ..."
+          cdk destroy "labsys-env-${{ inputs.targetEnv }}-*" --force
+
+          echo "Destroying the shared infrastructure ..."
+          cdk destroy labsys-sharedInfra-stack --force
 
       - name: Destroy AWS resources - API Gateway
-        if: ${{ ! inputs.keepApiGateway }}
+        if: ${{ !inputs.keepApiGateway }}
         run:  |
-          cd cdk-infra/github-deploy-infra/shared-api-gw-infra
-          cdk destroy --force
+          cdk destroy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack
+
+      - name: Keep API Gateway - redeploy it to clean the references, e.g. vpcLink association with api stage
+        if: ${{ inputs.keepApiGateway }}
+        run:  |
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
 
           
 
