@@ -68,9 +68,6 @@ jobs:
           echo "Destroying all microservices ..."
           cdk destroy "labsys-env-${{ inputs.targetEnv }}-*" --force
 
-          echo "Destroying the shared infrastructure ..."
-          cdk destroy labsys-sharedInfra-stack --force
-
       - name: Destroy AWS resources - API Gateway
         if: ${{ !inputs.keepApiGateway }}
         run:  |
