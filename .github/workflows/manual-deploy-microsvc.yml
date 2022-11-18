@@ -29,6 +29,11 @@ on:
 
 run-name: ${{ inputs.targetEnv }} - Deploy ${{ inputs. microSvcName }}, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
 
+env:
+  targetEnv: ${{ inputs.targetEnv }}
+  microSvcName: ${{ inputs.microSvcName }}
+  fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
+
 jobs:
   deployMicroSvc:
     name: manual deploy
@@ -73,18 +78,22 @@ jobs:
         run: 'sudo npm install -g aws-cdk'
       - name: Deploy to AWS
         run: |
-          cd cdk-infra/github-deploy-infra/common
+          cd cdk-infra/github-deploy-infra/micro-svc-infra
           npm install
           npm run build
-          
-          cd ../micro-svc-infra
-          npm install
-          npm run build
-          cdk deploy labsys-${{ inputs.targetEnv }}-${{ inputs.microSvcName }}-stack ---require-approval never
-        env:
-          targetEnv: ${{ inputs.targetEnv }}
-          microSvcName: ${{ inputs.microSvcName }}
-          fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
+
+          echo "Deploying Api Gateway for this environment ..."
+          cdk cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
+
+          echo "Deploying the microservice' ECS stack ..."
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-svc-${{ inputs.microSvcName }}-stack ---require-approval never
+
+          echo "Deploying the api-microservice-integration stack ..."
+          cdk deploy labsys-env-${{ inputs.targetEnv }}-apiIntegration-${{ inputs.microSvcName }}-stack ---require-approval never
+
+          echo "Redeploying Api Gateway, so the api-microservice-integration configuration can take effect ..."
+          cdk cdk deploy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack ---require-approval never
+
 
 
           
