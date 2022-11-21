@@ -1,4 +1,4 @@
-name: Manual deploy all
+name: Manual destroy one environment
 
 on:
   workflow_dispatch:
@@ -13,17 +13,22 @@ on:
           - d1
           - d2
           - t3
+          - u1
           - prod
-      fargateSvcDesiredCount:
-        description: 'fargateSvcDesiredCount'
-        default: '1'
+      keepApiGateway:
+        description: 'keepApiGateway'
+        default: true
         required: true
+        type: boolean
 
-run-name: ${{ inputs.targetEnv }} - Deploy all, svcCount=${{ inputs.fargateSvcDesiredCount }}, branch=${{ github.head_ref || github.ref_name }}
+run-name: ${{ inputs.targetEnv }} - Destroy stacks, keepApiGateway=${{ inputs.keepApiGateway }}, branch=${{ github.head_ref || github.ref_name }}
+
+env:
+  targetEnv: ${{ inputs.targetEnv }}
 
 jobs:
-  deployAllMicroServices:
-    name: manual deploy
+  destroyAllStacks:
+    name: Manual destroy one environment without deleting the shared infra
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -32,7 +37,6 @@ jobs:
       - name: For prod deployment, only user 'wdaicellorg' can deploy and deployment can only from a release branch
         if: ${{ inputs.targetEnv == 'prod' && !(github.actor == 'wdaicellorg' && startsWith(github.ref_name, 'release')) }}
         run: |
-          echo ${{ inputs.targetEnv }} ${{ github.actor }} ${{ contains(github.ref_name, 'release') }}
           echo Only user 'wdaicellorg' can deploy to prod, and only the release branch can be deployed to prod.
           exit 1
       - name: Configure AWS Credentials - nonprod
@@ -48,42 +52,31 @@ jobs:
           role-to-assume: ${{ format('arn:aws:iam::{0}:role/github-cdk-deploy-role', secrets.PROD_AWS_ACCOUNT) }}
           aws-region: 'us-east-1'
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'corretto'
-          cache: maven
-      - name: Build with Maven
-        run: |
-          cd microservices/microa
-          mvn -B package --file pom.xml
-          cd ../animal
-          mvn -B package --file pom.xml
       - name: Setup Node.js environment
         uses: actions/setup-node@v3.4.1
         with:
           node-version: "16"
       - name: Install AWS CDK
-        run: 'sudo npm install -g aws-cdk'
-      - name: Deploy to AWS
-        run: |
-          cd cdk-infra/github-deploy-infra/common
+        run: sudo npm install -g aws-cdk
+
+      - name: Destroying all microservices in one environment ...
+        run: |      
+          cd cdk-infra/github-deploy-infra/micro-svc-infra
           npm install
           npm run build
-                  
-          cd ../shared-api-gw-infra
+
+          echo "Destroying all microservices ..."
+          cdk destroy "labsys-env-${{ inputs.targetEnv }}-svc-*" --force
+
+      - name: Destroy AWS resources - API Gateway
+        if: ${{ !inputs.keepApiGateway }}
+        run:  |
+          cd cdk-infra/github-deploy-infra/micro-svc-infra
           npm install
           npm run build
-          cdk deploy ---require-approval never
-          
-          cd ../micro-svc-infra
-          npm install
-          npm run build
-          cdk deploy --all ---require-approval never
-        env:
-          targetEnv: ${{ inputs.targetEnv }}
-          fargateSvcDesiredCount: ${{ inputs.fargateSvcDesiredCount }}
+
+          cdk destroy labsys-env-${{ inputs.targetEnv }}-apiGateway-stack --force
+
 
           
 

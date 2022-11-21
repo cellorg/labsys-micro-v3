@@ -1,68 +1,62 @@
-import * as cdkUtil from '../../common/cdkUtil'
+import * as cdkUtil from '../common/cdkUtil';
 import * as cdk from 'aws-cdk-lib';
-import {aws_ec2, aws_ecs, aws_logs, Duration, aws_iam} from 'aws-cdk-lib';
-import {DnsRecordType, PrivateDnsNamespace} from 'aws-cdk-lib/aws-servicediscovery';
-import * as apigatewayv2_integrations from '@aws-cdk/aws-apigatewayv2-integrations-alpha';
-import * as apigatewayv2 from '@aws-cdk/aws-apigatewayv2-alpha';
-import {HttpMethod, HttpRoute, HttpRouteKey, HttpRouteProps} from '@aws-cdk/aws-apigatewayv2-alpha';
+import {aws_ec2, aws_ecs, aws_iam, aws_logs, Duration} from 'aws-cdk-lib';
 import {RetentionDays} from 'aws-cdk-lib/aws-logs';
-import { LabsysSecrets } from './shared-secrets-stack';
-
-export interface ServiceInfraStackProps extends cdk.StackProps {
-  vpcLink: apigatewayv2.VpcLink,
-  dnsNamespace: PrivateDnsNamespace,
-  securityGroup: aws_ec2.SecurityGroup,
-  ecsTaskRole: aws_iam.Role,
-  sharedSecrets: LabsysSecrets
-}
+import {NetworkLoadBalancer, Protocol} from 'aws-cdk-lib/aws-elasticloadbalancingv2';
+import {allEnvConfig, vpcName} from '../common/allEnvConfig';
+import {ISecret} from "aws-cdk-lib/aws-secretsmanager";
 
 export class MicroSvcStack extends cdk.Stack {
 
-  constructor(scope: cdk.App, id: string, props: ServiceInfraStackProps, microSvcName: string) {
+  constructor(scope: cdk.App, id: string,
+              targetEnv: string,
+              microSvcName: string,
+              ecsTaskRole: aws_iam.Role,
+              sharedSecrets: Record<string, ISecret>,
+              props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, { vpcName: cdkUtil.vpcId });
+    const envConfig = allEnvConfig[`${targetEnv}`];
+    const appEnvMicroPrefix = `${cdkUtil.appPrefix}-${targetEnv}-${microSvcName}`;
+    const containerPort = envConfig.NLB_ECS_PORTS[`${microSvcName}`];
 
-    const vpcLink = props.vpcLink;
-    const dnsNamespace = props.dnsNamespace;
-    const securityGroup = props.securityGroup;
-    const ecsTaskRole = props.ecsTaskRole;
-    const sharedSecrets = props.sharedSecrets;
+    //const vpc = aws_ec2.Vpc.fromLookup(this, cdkUtil.vpcId, {vpcId: cdkUtil.vpcId});
+    const vpc = aws_ec2.Vpc.fromLookup(this, vpcName, {vpcName: vpcName});
 
-    const microSvcNameResourcePrefix = cdkUtil.applicationName + '-' + microSvcName;
-    const apiGateway = apigatewayv2.HttpApi.fromHttpApiAttributes(this, cdkUtil.exportedApiGatewayId, {
-      httpApiId: cdk.Fn.importValue(cdkUtil.exportedApiGatewayId)
-    }) as apigatewayv2.HttpApi;
+    const nlb = NetworkLoadBalancer.fromNetworkLoadBalancerAttributes(this, 'lookupNLB', {
+      loadBalancerArn: cdk.Fn.importValue(cdkUtil.exportedNlbArn),
+      vpc: vpc
+    });
 
-    const pdpOwnerPassword = props.sharedSecrets.PDP_OWNER_PASSWORD;
+    const pdpOwnerPassword = sharedSecrets.PDP_OWNER_PASSWORD;
     pdpOwnerPassword.grantRead(ecsTaskRole);
 
-    const clusterId = microSvcNameResourcePrefix + '-ecsCluster';
-    const cluster = new aws_ecs.Cluster(this, clusterId, {
-      clusterName: clusterId,
+    const clusterName = appEnvMicroPrefix + '-ecsCluster';
+    const cluster = new aws_ecs.Cluster(this, clusterName, {
+      clusterName: clusterName,
       vpc: vpc,
     });
-    cdkUtil.tagItem(cluster, clusterId);
+    cdkUtil.tagItem(cluster, clusterName);
 
-    const taskDefinitionId = microSvcNameResourcePrefix + '-taskDefinition';
+    const taskDefinitionName = `${appEnvMicroPrefix}-taskDefinition`;
     //@ts-ignore
-    const taskDefinition = new aws_ecs.FargateTaskDefinition(this, taskDefinitionId, {
+    const taskDefinition = new aws_ecs.FargateTaskDefinition(this, taskDefinitionName, {
       cpu: 256,
       memoryLimitMiB: 512,
       taskRole: ecsTaskRole,
     });
-    cdkUtil.tagItem(taskDefinition, taskDefinitionId);
+    cdkUtil.tagItem(taskDefinition, taskDefinitionName);
 
     // Note: keep the logGroupName unique
     // If we want to keep the log after destroy, then it needs to be unique.
     // Otherwise, re-deploy will fail with "already exist" error
-    const logGroupName = '/ecs/' + microSvcName + "/" + cdkUtil.timeStampStr();
+    const logGroupName = `/ecs/${microSvcName}/${cdkUtil.timeStampStr()}`;
     const svcLogGroup = new aws_logs.LogGroup(
         this,
-        microSvcName + '-ServiceLogGroup',
+        `${microSvcName}-ServiceLogGroup`,
         {
           logGroupName: logGroupName,
-          retention: cdkUtil.awsSvcLogRetentionDays as RetentionDays,
+          retention: envConfig.MICROSVC_LOG_RETENTION_DAYS as RetentionDays,
           removalPolicy: cdk.RemovalPolicy.DESTROY,
         }
     );
@@ -70,45 +64,59 @@ export class MicroSvcStack extends cdk.Stack {
       logGroup: svcLogGroup,
       streamPrefix: microSvcName,
     });
-    const containerId = microSvcNameResourcePrefix + '-container';
+    const containerName = `${appEnvMicroPrefix}-container`;
+
+    //@ts-ignore
     const container = taskDefinition.addContainer(
-        containerId,
+        containerName,
         {
-          containerName: containerId,
+          containerName: containerName,
           // In the future, we may be able to set the specific ECR repo for the images once the cdk open issue is completed.
           // cdk open issue: https://github.com/aws/aws-cdk/issues/12597
-          image: aws_ecs.ContainerImage.fromAsset('../../../microservices/' + microSvcName),
+          image: aws_ecs.ContainerImage.fromAsset(`../../../microservices/${microSvcName}`, {
+            buildArgs: {
+              PORT: containerPort.toString()
+            }
+          }),
           environment: {
-            PDP_OWNER_USERNAME: cdkUtil.PDP_OWNER_USERNAME,
-            PDP_OWNER_JDBC_URL: cdkUtil.PDP_OWNER_JDBC_URL,
+            PORT: containerPort.toString(),
+            PDP_OWNER_USERNAME: envConfig.PDP_OWNER_USERNAME,
+            PDP_OWNER_JDBC_URL: envConfig.PDP_OWNER_JDBC_URL,
           },
           secrets: {
             PDP_OWNER_PASSWORD: aws_ecs.Secret.fromSecretsManager(sharedSecrets.PDP_OWNER_PASSWORD),
           },
           logging: svcLogDriver,
-          portMappings: [{ containerPort: 8080 }],
+          portMappings: [{
+            containerPort: containerPort,
+            hostPort: containerPort,
+            protocol: aws_ecs.Protocol.TCP
+          }],
         }
     );
-    cdkUtil.tagItem(container, containerId);
+    cdkUtil.tagItem(container, containerName);
 
-    const fargateServiceId = microSvcNameResourcePrefix + '-fargateService';
     //@ts-ignore
-    const fargateService = new aws_ecs.FargateService(this, fargateServiceId, {
+    const securityGroupName = `${appEnvMicroPrefix}-securityGroup`;
+    const securityGroup = new aws_ec2.SecurityGroup(this, securityGroupName, {
+      securityGroupName: securityGroupName,
+      vpc: vpc,
+      allowAllOutbound: true,
+    });
+    cdkUtil.tagItem(securityGroup, securityGroupName);
+
+    securityGroup.addIngressRule(aws_ec2.Peer.anyIpv4(), aws_ec2.Port.tcp(containerPort), securityGroupName);
+
+    const fargateServiceName = `${appEnvMicroPrefix}-fargateService`;
+    //@ts-ignore
+    const fargateService = new aws_ecs.FargateService(this, fargateServiceName, {
       cluster: cluster,
       securityGroups: [securityGroup],
       taskDefinition: taskDefinition,
-      circuitBreaker: {
-        rollback: true,
-      },
       assignPublicIp: false,
       desiredCount: cdkUtil.fargateSvcDesiredCount,
-      cloudMapOptions: {
-        name: microSvcNameResourcePrefix,
-        cloudMapNamespace: dnsNamespace,
-        dnsRecordType: DnsRecordType.SRV,
-      },
     });
-    cdkUtil.tagItem(fargateService, fargateServiceId);
+    cdkUtil.tagItem(fargateService, fargateServiceName);
 
     const scaling = fargateService.autoScaleTaskCount({
       maxCapacity: 6,
@@ -120,46 +128,25 @@ export class MicroSvcStack extends cdk.Stack {
       scaleOutCooldown: Duration.seconds(60)
     });
 
-    // Open issues: https://github.com/aws/aws-cdk/issues/12337
-    // const apiGatewayId = cdkUtil.applicationName + '-apiGateway';
-    // apiGateway.addRoutes({
-    //   integration: new apigatewayv2_integrations.HttpServiceDiscoveryIntegration(
-    //       microSvcName + '-ServiceDiscoveryIntegration',
-    //       this.cloudMapSvc,
-    //       {
-    //         vpcLink: vpcLink,
-    //       },
-    //   ),
-    //   path: '/' + microSvcName + '/{proxy+}',
-    //   methods: [HttpMethod.ANY],
-    // });
-    // cdkUtil.tagItem(apiGateway, apiGatewayId);
-    // NOTE: following is the workaround for now 2022-10-07
-    try {
-      const integration = new apigatewayv2_integrations.HttpServiceDiscoveryIntegration(
-          microSvcName + '-ServiceDiscoveryIntegration',
-          //@ts-ignore
-          fargateService.cloudMapService,
-          {
-            vpcLink: vpcLink,
-          },
-      );
+    const nlbListenerName = `${appEnvMicroPrefix}-nlbListener`;
+    const nlbListener = nlb.addListener(nlbListenerName, {
+      port: containerPort
+    });
 
-      const httpRouteKey = HttpRouteKey.with(
-          '/' + microSvcName + '/{proxy+}',
-          HttpMethod.ANY
-      );
+    // add fargate service to the nlb listener
+    const targetGroupName = `${appEnvMicroPrefix}-targetGroup`;
+    nlbListener.addTargets(targetGroupName, {
+      targetGroupName: targetGroupName,
+      port: containerPort,
+      targets: [fargateService],
+      healthCheck: {
+        port: containerPort.toString(),
+        path: `/${microSvcName}/health`,
+        protocol: Protocol.HTTP,
+        healthyHttpCodes: '200'
+      }
+    });
 
-      const httpRouteProps: HttpRouteProps = {
-        httpApi: apiGateway,
-        integration: integration,
-        routeKey: httpRouteKey
-      };
-
-      new HttpRoute(this, id, httpRouteProps);
-    } catch (e) {
-      console.log(e);
-    }
   }
 }
 

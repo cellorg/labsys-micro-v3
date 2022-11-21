@@ -23,7 +23,13 @@ public class DemoController {
         System.out.println("/hello invoked - System.out.println");
         logger.info("/hello invoked - logging");
         return "Hello from MicorA service! >>>>>>\n parameter dbUrl=" + dbUrl
-                + "\npdpOwnerUsername=" + pdpOwnerUsername
-                + "\npdpOwnerPassword=" + pdpOwnerPassword;
+                + "\n pdpOwnerUsername=" + pdpOwnerUsername
+                + "\n pdpOwnerPassword=" + pdpOwnerPassword
+                + "\n";
+    }
+
+    @GetMapping("/health")
+    public String heath() {
+        return "Microa is Healthy! \n";
     }
 }

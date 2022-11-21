@@ -11,7 +11,12 @@ public class DemoController {
 
     @GetMapping("/hello")
     public String helloWorld() {
-        return "Greetings from Animal service! >>>>>> parameter dbUrl is " + dbUrl;
+        return "Greetings from Animal service! >>>>>> parameter dbUrl is " + dbUrl + "\n";
+    }
+
+    @GetMapping("/health")
+    public String heath() {
+        return "Animal Micro Service is Healthy! \n";
     }
 
 }
