@@ -1,14 +1,16 @@
 # labsys-micro
 
-API Gateway -> VPC Link -> Cloud Map (i.e. Service Discovery) -> ECS -> fargate services 
+### Architecture
+client(on-premise) -> private API Gateway (HttpApi) -> VPC Link -> NLB -> ECS (fargate services) 
 
 ### Initial manual steps that AWS administrator needs to take.
 There are three tasks that need to be carried out by the AWS administrator before using this project's Github Actions. 
 1. **Create the VPC**: The infrastructure team prefers to having all non prod environments, i.e. d1, d2, t3, etc.
   to be deployed in the same nonprod AWS account to share the same VPC, etc. in order to reduce the cost.
   Therefore, the vpc should be created first. Please let the application developers know the vpc name for both nonprod and prod.
-  The application developer needs to make sure the vpcId matches to what infrastructure team created in the 
-  cdk-infra/githu-deploy-infra/common/cdkUtil.ts. This allows our application to import the existing VPC.
+  The application developer needs to update it in matches to what infrastructure team created in the 
+  cdk-infra/github-deploy-infra/micro-svc-infra/common/allEnvConfig.ts. 
+  This allows our application to look up and import the existing VPC.
 2. **Create the Secrets**: We are using AWS Secrets Manager to store the database passwords, etc.
   Therefore, the AWS administrator should create these secrets first. This can be done via the following aws-cli command. 
   Note: in order to run aws-cli, you will need to do aws config (use the profiles for nonprod and prod AWS accounts). 
@@ -20,7 +22,8 @@ There are three tasks that need to be carried out by the AWS administrator befor
       * `aws secretsmanager create-secret --name prod_PDP_OWNER_PASSWORD --secret-string "pdpOwnerPasswordFromSecret-prod" --profile prod`
 3. **Configure the OpenID Connect provider**: We are using OpenID Connect to authenticate the Github Actions with AWS,
   so that we can deploy the application from Github Actions to AWS. 
-  The following steps shows how the AWS administrator can configure it in AWS using the cdk deployment we created.
+  The repo configuration is in the file cdk/infra/admin-init-infra/cdk-init-oidc/lib/cdk-init-oidc-stack.ts.
+  The following steps shows how the AWS administrator can configure it in AWS using the cdk deployment.
   * Install NodeJS
   * Install AWS CDK `npm install -g aws-cdk`
   * Install Typescript `npm install -g typescript`
@@ -31,5 +34,6 @@ There are three tasks that need to be carried out by the AWS administrator befor
   * `cdk bootstrap --profile <env>` (note: run this for both nonprod and prod environment)
   * `cdk deploy --profile <env>` (note: run this for both nonprod and prod environment)
 
-Note: please let the application developers know the AWS account numbers for nonprod and prod, 
-so that we can set them in the Github secrets.
+Note: 
+  * Please let the application developers know the AWS account numbers for nonprod and prod, 
+    so that we can set them in the Github secrets.
