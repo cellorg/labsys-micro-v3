@@ -2,8 +2,17 @@ name: Manual destroy including shared infra
 
 on:
   workflow_dispatch:
+    inputs:
+      targetEnv:
+        type: choice
+        description: 'targetEnv'
+        default: 'nonprod'
+        required: true
+        options:
+          - nonprod
+          - prod
 
-run-name: all - Destroy all environments' stacks, branch=${{ github.head_ref || github.ref_name }}
+run-name: ${{ inputs.targetEnv }} -  - Destroy all environments' stacks, branch=${{ github.head_ref || github.ref_name }}
 
 jobs:
   destroyAllStacks:
