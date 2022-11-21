@@ -1,4 +1,4 @@
-name: Manual destroy all environments
+name: Manual destroy including shared infra
 
 on:
   workflow_dispatch:
@@ -7,7 +7,7 @@ run-name: all - Destroy all environments' stacks, branch=${{ github.head_ref || 
 
 jobs:
   destroyAllStacks:
-    name: Manual destroy all environments
+    name: Manual destroy everything including the shared infra in one AWS account
     runs-on: ubuntu-latest
     permissions:
       id-token: write

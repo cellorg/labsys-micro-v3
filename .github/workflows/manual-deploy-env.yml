@@ -1,4 +1,4 @@
-name: Manual deploy all in one environment
+name: Manual deploy one environment
 
 on:
   workflow_dispatch:
@@ -27,7 +27,7 @@ env:
 
 jobs:
   deployAllMicroServicesWithinEnv:
-    name: Manual deploy all in one environment
+    name: deploy all microservices in one environment
     runs-on: ubuntu-latest
     permissions:
       id-token: write

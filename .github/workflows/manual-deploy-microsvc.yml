@@ -36,7 +36,7 @@ env:
 
 jobs:
   deployMicroSvc:
-    name: Manual deploy one Micro service
+    name: deploy one Micro service
     runs-on: ubuntu-latest
     permissions:
       id-token: write

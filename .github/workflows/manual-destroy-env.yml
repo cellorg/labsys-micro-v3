@@ -28,7 +28,7 @@ env:
 
 jobs:
   destroyAllStacks:
-    name: Manual destroy one environment
+    name: Manual destroy one environment without deleting the shared infra
     runs-on: ubuntu-latest
     permissions:
       id-token: write
